@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+npm-cache/
+
+# Environment / secrets (keep the .example templates)
+.env
+.env.*
+!.env.example
+
+# Build output and caches
+.next/
+out/
+dist/
+build/
+.expo/
+.turbo/
+.wrangler/
+.vercel/
+*.tsbuildinfo
+
+# Video render scratch
+renders/
+_work/
+
+# Logs and OS junk
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Large archives (GitHub rejects files over 100MB)
+*.zip

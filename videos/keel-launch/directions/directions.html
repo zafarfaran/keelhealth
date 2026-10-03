@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keel launch directions</title>
+<style>
+  @font-face { font-family: Fraunces; src: url(../assets/fonts/Fraunces-var.woff2) format('woff2'); font-weight: 600 900; }
+  @font-face { font-family: Anton; src: url(../assets/fonts/Anton.woff2) format('woff2'); }
+  @font-face { font-family: Gochi; src: url(../assets/fonts/GochiHand.woff2) format('woff2'); }
+  @font-face { font-family: Bricolage; src: url(../assets/fonts/BricolageGrotesque-var.woff2) format('woff2'); font-weight: 400 800; }
+  @font-face { font-family: Baloo; src: url(../assets/fonts/Baloo2-var.woff2) format('woff2'); font-weight: 400 800; }
+  @font-face { font-family: Plex; src: url(../assets/fonts/IBMPlexMono-500.woff2) format('woff2'); font-weight: 500; }
+  :root { --ink:#3B322C; --ivory:#FBF8F4; --almond:#EDE3D6; --terra:#C2714F; --terra-deep:#A85A3C; --clay:#C08E82; --apricot:#F0C9A8; --honey:#E8C05F; --plum:#A9647A; --olive:#9AA88F; --label:#6D6157; --border:#E0D4C4; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #E9E0D3; color: var(--ink); font-family: Baloo, system-ui, sans-serif; padding: 40px 16px 80px; }
+  .wrap { max-width: 1320px; margin: 0 auto; }
+  header h1 { font-weight: 800; font-size: 40px; letter-spacing: -0.03em; }
+  header p { color: #5D534B; font-size: 18px; max-width: 760px; margin-top: 6px; line-height: 1.4; }
+
+  .dir { display: grid; grid-template-columns: 300px 1fr; gap: 28px; margin-top: 44px; padding-top: 32px; border-top: 1px solid var(--border); }
+  @media (max-width: 900px) { .dir { grid-template-columns: 1fr; } }
+  .info .tag { font-family: Plex; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); }
+  .info h2 { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; margin: 4px 0 8px; line-height: 1.05; }
+  .info p { font-size: 16px; line-height: 1.45; color: #4B423B; margin-bottom: 10px; }
+  .info b { color: var(--ink); }
+  .sw { display: flex; gap: 6px; margin: 10px 0 12px; }
+  .sw span { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(59,50,44,.15); }
+  .pick { display: inline-block; margin-top: 4px; font-family: Plex; font-size: 11px; letter-spacing: .08em; color: #fff; background: var(--terra-deep); padding: 4px 8px; border-radius: 4px; }
+
+  .frames { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 600px) { .frames { grid-template-columns: 1fr 1fr; } }
+  figure { display: flex; flex-direction: column; gap: 8px; }
+  figcaption { font-family: Plex; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); }
+  .cell { aspect-ratio: 9/16; container-type: inline-size; position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 0 rgba(0,0,0,.05), 0 0 0 1px rgba(59,50,44,.08); }
+  .abs { position: absolute; }
+  img.art { position: absolute; object-fit: contain; }
+
+  /* ---------- A: cut paper ---------- */
+  .A { background: #F1E8DC; font-family: Fraunces, serif; }
+  .A::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background-image: radial-gradient(rgba(120,90,60,.10) 1px, transparent 1.2px), radial-gradient(rgba(120,90,60,.07) 1px, transparent 1.2px);
+    background-size: 1.6cqw 1.6cqw, 2.3cqw 2.3cqw; background-position: 0 0, .7cqw 1.1cqw; }
+  .A .h { position: absolute; left: 8cqw; right: 8cqw; font-weight: 800; font-size: 11cqw; line-height: 1.02; letter-spacing: -0.02em; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+  .torn { display: inline-block; padding: .02em .22em .06em; color: #FBF8F4; background: var(--terra);
+    clip-path: polygon(0 8%, 6% 0, 14% 6%, 23% 1%, 33% 7%, 44% 0, 55% 6%, 66% 1%, 77% 7%, 88% 0, 100% 6%, 98% 52%, 100% 94%, 90% 100%, 79% 94%, 67% 100%, 55% 93%, 43% 100%, 31% 94%, 19% 100%, 8% 94%, 0 100%, 2% 50%);
+    filter: drop-shadow(0 .5cqw 0 rgba(59,50,44,.18)); transform: rotate(-2deg); }
+  .paper { position: absolute; border-radius: 50%; box-shadow: .8cqw 1.2cqw 0 rgba(59,50,44,.16); }
+  .label { position: absolute; font-family: Fraunces; font-weight: 700; font-size: 4.6cqw; padding: 1.4cqw 3cqw; background: #FBF8F4; color: var(--ink);
+    clip-path: polygon(0 10%, 8% 0, 20% 8%, 34% 0, 50% 7%, 66% 0, 80% 8%, 92% 0, 100% 10%, 97% 50%, 100% 90%, 90% 100%, 75% 92%, 60% 100%, 45% 93%, 30% 100%, 15% 93%, 0 100%, 3% 50%); box-shadow: none; filter: drop-shadow(.5cqw .8cqw 0 rgba(59,50,44,.18)); }
+
+  /* ---------- B: two-ink riso ---------- */
+  .B { background: #F3ECE1; font-family: Anton, sans-serif; color: var(--terra); }
+  .B::after { content: ''; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply; opacity: .35;
+    background-image: radial-gradient(rgba(60,40,30,.35) .6px, transparent .9px); background-size: .9cqw .9cqw; }
+  .B .h { position: absolute; left: 7cqw; right: 7cqw; font-size: 21cqw; line-height: .9; text-transform: uppercase; letter-spacing: .005em;
+    color: var(--terra); text-shadow: 1.2cqw .8cqw 0 rgba(169,100,122,.85); mix-blend-mode: multiply; }
+  .B .plum { color: var(--plum); text-shadow: -1cqw .6cqw 0 rgba(194,113,79,.8); }
+  .halftone { position: absolute; background-image: radial-gradient(var(--plum) 32%, transparent 34%); background-size: 3cqw 3cqw; mix-blend-mode: multiply; opacity: .85; }
+  .halftone.t { background-image: radial-gradient(var(--terra) 32%, transparent 34%); }
+
+  /* ---------- C: her journal ---------- */
+  .C { background: #FFFDF8; font-family: Gochi, cursive; color: #3B322C;
+    background-image: linear-gradient(transparent calc(100% - .25cqw), rgba(120,150,190,.35) 0); background-size: 100% 7cqw; }
+  .C::before { content: ''; position: absolute; top: 0; bottom: 0; left: 11cqw; width: .35cqw; background: rgba(192,142,130,.7); }
+  .C .h { position: absolute; left: 15cqw; right: 6cqw; font-size: 11.5cqw; line-height: 1.08; }
+  .mk { background: linear-gradient(transparent 50%, rgba(240,201,168,.95) 50%, rgba(240,201,168,.95) 88%, transparent 88%); padding: 0 .1em; }
+  .tape { position: absolute; width: 22cqw; height: 6cqw; background: rgba(232,192,95,.55); box-shadow: 0 .3cqw .6cqw rgba(0,0,0,.06); }
+  .tape.r { background: rgba(192,142,130,.5); }
+  .sticky { position: absolute; background: #F9E7A6; padding: 4cqw; font-size: 6cqw; line-height: 1.12; box-shadow: .8cqw 1.4cqw 1.6cqw rgba(59,50,44,.18); }
+  .check { font-size: 6.4cqw; line-height: 1.45; }
+  .box { display: inline-block; width: 5cqw; height: 5cqw; border: .5cqw solid #3B322C; border-radius: 1cqw; margin-right: 2cqw; vertical-align: -.6cqw; position: relative; }
+  .box.on::after { content: ''; position: absolute; left: .6cqw; top: -1.6cqw; width: 2.6cqw; height: 5cqw; border-right: .9cqw solid var(--terra); border-bottom: .9cqw solid var(--terra); transform: rotate(40deg); }
+  .emo { position: absolute; filter: drop-shadow(.7cqw .9cqw 0 rgba(59,50,44,.2)); }
+
+  /* ---------- D: one line, colour fields ---------- */
+  .D { font-family: Bricolage, sans-serif; }
+  .D .h { position: absolute; left: 8cqw; right: 8cqw; font-weight: 800; font-size: 14cqw; line-height: .95; letter-spacing: -0.045em; }
+  .D svg.line { position: absolute; overflow: visible; }
+
+  .note { font-family: Plex; font-size: 3cqw; letter-spacing: .06em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><g id="face"><circle cx="50" cy="52" r="40" fill="#E8C05F" stroke="#3B322C" stroke-width="5"/></g></defs>
+  <symbol id="e-puzzled" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M28 34 Q36 26 45 32"/><path d="M57 38 L71 37"/><path d="M38 71 Q44 65 50 71 T63 70"/></g><circle cx="38" cy="47" r="4.5" fill="#3B322C"/><circle cx="63" cy="48" r="4.5" fill="#3B322C"/></symbol>
+  <symbol id="e-happy" viewBox="0 0 100 100"><use href="#face"/><circle cx="28" cy="62" r="6.5" fill="#C08E82" opacity=".8"/><circle cx="72" cy="62" r="6.5" fill="#C08E82" opacity=".8"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M30 50 Q38 41 46 50"/><path d="M54 50 Q62 41 70 50"/><path d="M38 64 Q50 76 62 64"/></g></symbol>
+  <symbol id="e-tired" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M29 43 L44 36"/><path d="M71 43 L56 36"/><path d="M35 71 Q42 64 50 71 Q58 78 65 71"/></g><circle cx="38" cy="50" r="4.5" fill="#3B322C"/><circle cx="62" cy="50" r="4.5" fill="#3B322C"/></symbol>
+</svg>
+
+<header>
+  <h1>Keel launch: four new directions</h1>
+  <p>Same story and copy as v1. Each direction changes the art, type, colour and how things move. The hook drawing in each one is a real gpt-image-2.5 test in that style; product moments are built in the style so you can judge them.</p>
+</header>
+
+<!-- ================= A ================= -->
+<section class="dir">
+  <div class="info">
+    <div class="tag">Direction A</div>
+    <h2>Cut Paper</h2>
+    <p>Everything is torn and cut paper laid on a warm table: the woman, the plate, the labels. It feels handmade and premium, like a magazine spread that came alive.</p>
+    <div class="sw"><span style="background:#F1E8DC"></span><span style="background:#C2714F"></span><span style="background:#C08E82"></span><span style="background:#E8C05F"></span><span style="background:#9AA88F"></span><span style="background:#3B322C"></span></div>
+    <p><b>Type:</b> Fraunces 800, soft and a little wonky. Key words sit on torn terracotta strips.</p>
+    <p><b>Motion:</b> stop-motion at 12fps. Pieces slide in and drop with a paper shadow; scenes change as a new sheet of paper slides over the old one. No camera whips.</p>
+  </div>
+  <div class="frames">
+    <figure><div class="cell A">
+      <div class="h" style="top:9cqw">Same <span class="torn">walks.</span><br>Different body.</div>
+      <img class="art" src="art/a-collage.png" style="left:2cqw;width:96cqw;bottom:-4cqw;height:140cqw;mix-blend-mode:multiply" alt="">
+    </div><figcaption>Hook · 0s</figcaption></figure>
+
+    <figure><div class="cell A">
+      <div class="h" style="top:9cqw">Snap your <span class="torn" style="background:#9AA88F">plate.</span></div>
+      <div class="paper" style="left:12cqw;top:52cqw;width:76cqw;height:76cqw;background:#FBF8F4"></div>
+      <div class="paper" style="left:19cqw;top:59cqw;width:62cqw;height:62cqw;background:#EDE3D6;box-shadow:none"></div>
+      <div class="paper" style="left:24cqw;top:70cqw;width:30cqw;height:20cqw;background:#E79A73;border-radius:40% 55% 45% 50%"></div>
+      <div class="paper" style="left:50cqw;top:64cqw;width:22cqw;height:22cqw;background:#FFFDF6"></div>
+      <div class="paper" style="left:34cqw;top:94cqw;width:34cqw;height:14cqw;background:#9AA88F;border-radius:60% 30% 60% 30%"></div>
+      <div class="label" style="left:8cqw;top:136cqw;transform:rotate(-3deg)">Salmon · 28g</div>
+      <div class="label" style="left:46cqw;top:142cqw;transform:rotate(2deg);background:#9AA88F;color:#fff">Fits your day ✓</div>
+    </div><figcaption>Food camera · 10s</figcaption></figure>
+
+    <figure><div class="cell A" style="background:#E9DDCB">
+      <div class="paper" style="left:26cqw;top:52cqw;width:48cqw;height:48cqw;background:#C2714F;border-radius:47% 53% 50% 50%"></div>
+      <div class="h" style="top:60cqw;text-align:center;font-size:24cqw;color:#FBF8F4;letter-spacing:-0.04em">keel.</div>
+      <div class="h" style="top:110cqw;text-align:center;font-size:10cqw">Strong for life.</div>
+      <div class="label" style="left:22cqw;top:140cqw;font-size:5cqw;padding:2.6cqw 6cqw">Start your free trial</div>
+    </div><figcaption>End · 22s</figcaption></figure>
+  </div>
+</section>
+
+<!-- ================= B ================= -->
+<section class="dir">
+  <div class="info">
+    <div class="tag">Direction B</div>
+    <h2>Two-Ink Riso</h2>
+    <p>A risograph zine: only terracotta and plum ink on cream paper, with grain, halftone dots and slightly misaligned layers. It's the loudest and most social-feed of the four, and it reads well at thumbnail size.</p>
+    <div class="sw"><span style="background:#F3ECE1"></span><span style="background:#C2714F"></span><span style="background:#A9647A"></span><span style="background:#3B322C"></span></div>
+    <p><b>Type:</b> Anton, huge, all caps, stacked tight. Words print in one ink with a ghost of the other.</p>
+    <p><b>Motion:</b> hard cuts on every beat. The two ink layers start out of register and snap together on the hit, and a print-roller wipe changes scenes. Grain flickers at 8fps.</p>
+  </div>
+  <div class="frames">
+    <figure><div class="cell B">
+      <img class="art" src="art/b-riso.png" style="left:14cqw;width:86cqw;top:46cqw;height:130cqw;mix-blend-mode:multiply" alt="">
+      <div class="h" style="top:7cqw">Same<br>walks.<br><span class="plum">Different<br>body.</span></div>
+    </div><figcaption>Hook · 0s</figcaption></figure>
+
+    <figure><div class="cell B">
+      <div class="halftone" style="left:0;right:0;top:64cqw;height:52cqw;opacity:.35"></div>
+      <div class="h" style="top:8cqw;font-size:15cqw">See the gap.<br><span class="plum">Close it.</span></div>
+      <div class="h" style="top:62cqw;font-size:44cqw;line-height:.85;color:var(--plum);text-shadow:1.4cqw 1cqw 0 rgba(194,113,79,.8)">104</div>
+      <div class="h" style="top:110cqw;font-size:13cqw">grams a day</div>
+      <div class="abs" style="left:7cqw;right:7cqw;top:136cqw;height:7cqw;border:.8cqw solid var(--terra)"><div class="halftone t" style="inset:0;width:100%;opacity:1"></div></div>
+      <div class="abs note" style="left:7cqw;top:148cqw;color:var(--plum)">From 62g · your target 104g</div>
+    </div><figcaption>Protein gap · 12s</figcaption></figure>
+
+    <figure><div class="cell B" style="background:#C2714F">
+      <div class="halftone" style="inset:0;opacity:.25"></div>
+      <div class="h" style="top:44cqw;font-size:40cqw;color:#F3ECE1;text-shadow:1.6cqw 1.2cqw 0 rgba(169,100,122,.9);mix-blend-mode:normal">KEEL.</div>
+      <div class="h" style="top:94cqw;font-size:14cqw;color:#F3ECE1;text-shadow:none;mix-blend-mode:normal">Strong for life.</div>
+      <div class="abs" style="left:7cqw;top:140cqw;background:#3B322C;color:#F3ECE1;font-family:Anton;font-size:6cqw;padding:3cqw 6cqw;text-transform:uppercase">Start your free trial</div>
+    </div><figcaption>End · 22s</figcaption></figure>
+  </div>
+</section>
+
+<!-- ================= C ================= -->
+<section class="dir">
+  <div class="info">
+    <div class="tag">Direction C <span class="pick">MY PICK</span></div>
+    <h2>Her Journal</h2>
+    <p>The film is her own diary. Lined pages, marker sketches taped in, highlighter, ticked boxes and the Keel emoji as stickers. It's the most personal of the four, and it shows how Keel fits into a real week instead of selling features.</p>
+    <div class="sw"><span style="background:#FFFDF8"></span><span style="background:#F0C9A8"></span><span style="background:#C2714F"></span><span style="background:#F9E7A6"></span><span style="background:#E8C05F"></span><span style="background:#3B322C"></span></div>
+    <p><b>Type:</b> Gochi Hand, one handwritten family, so it reads as her writing, with a peach highlighter on key words.</p>
+    <p><b>Motion:</b> the pen writes each line left to right, stickers slap on with a squash, the coach replies on a sticky note that peels in, and scenes change with a page turn. Upbeat but warm.</p>
+  </div>
+  <div class="frames">
+    <figure><div class="cell C">
+      <div class="h" style="top:8cqw">Same walks.<br><span class="mk">Different body.</span></div>
+      <img class="art" src="art/c-journal.png" style="left:12cqw;width:84cqw;top:42cqw;height:126cqw;mix-blend-mode:multiply" alt="">
+      <div class="tape" style="left:16cqw;top:46cqw;transform:rotate(-8deg)"></div>
+      <div class="tape r" style="right:6cqw;top:150cqw;transform:rotate(10deg)"></div>
+      <svg class="emo" style="right:6cqw;top:54cqw;width:22cqw;height:22cqw;transform:rotate(8deg)"><use href="#e-puzzled"/></svg>
+    </div><figcaption>Hook · 0s</figcaption></figure>
+
+    <figure><div class="cell C">
+      <div class="h" style="top:8cqw;font-size:10cqw">Tuesday. Slept badly, <span class="mk">hot flushes</span> again.</div>
+      <svg class="emo" style="right:8cqw;top:30cqw;width:16cqw;height:16cqw"><use href="#e-tired"/></svg>
+      <div class="sticky" style="left:15cqw;right:10cqw;top:54cqw;transform:rotate(-2deg)"><span style="font-family:Plex;font-size:3cqw;letter-spacing:.08em;color:#8A6A2A">KEEL COACH</span><br>Lighter session today. Protein at breakfast.</div>
+      <div class="abs check" style="left:15cqw;top:104cqw">
+        <div><span class="box on"></span>Eggs on toast · 30g</div>
+        <div><span class="box on"></span>20 min lift</div>
+        <div><span class="box"></span>Walk after dinner</div>
+      </div>
+      <svg class="emo" style="right:8cqw;top:150cqw;width:20cqw;height:20cqw;transform:rotate(-8deg)"><use href="#e-happy"/></svg>
+    </div><figcaption>AI coach · 14s</figcaption></figure>
+
+    <figure><div class="cell C">
+      <div class="h" style="top:56cqw;left:15cqw;font-size:26cqw;line-height:1">keel<span style="color:#C08E82">.</span></div>
+      <div class="h" style="top:90cqw;font-size:11cqw"><span class="mk">Strong for life.</span></div>
+      <div class="abs" style="left:18cqw;top:130cqw;background:#3B322C;color:#FFFDF8;font-size:6.4cqw;padding:3cqw 7cqw;border-radius:99px;transform:rotate(-2deg);box-shadow:.8cqw 1.2cqw 0 rgba(59,50,44,.2)">Start your free trial</div>
+      <div class="tape" style="left:14cqw;top:126cqw;transform:rotate(-14deg);width:14cqw"></div>
+    </div><figcaption>End · 22s</figcaption></figure>
+  </div>
+</section>
+
+<!-- ================= D ================= -->
+<section class="dir">
+  <div class="info">
+    <div class="tag">Direction D</div>
+    <h2>One Line</h2>
+    <p>One unbroken line draws the whole film. It draws her, then without lifting it becomes the plate, the dumbbell, and finally the dot in the logo. Solid brand-colour fields flip on the beat behind it. Minimal and confident, like a poster series.</p>
+    <div class="sw"><span style="background:#EDE3D6"></span><span style="background:#C2714F"></span><span style="background:#E8C05F"></span><span style="background:#A9647A"></span><span style="background:#3B322C"></span><span style="background:#FBF8F4"></span></div>
+    <p><b>Type:</b> Bricolage Grotesque 800, very large and tightly tracked, one family.</p>
+    <p><b>Motion:</b> the line is the camera. It travels off one object and draws the next, and the background colour hard-cuts on each bar. Type slams in, oversized, then settles.</p>
+  </div>
+  <div class="frames">
+    <figure><div class="cell D" style="background:#EDE3D6">
+      <div class="h" style="top:8cqw">Same walks.<br><span style="color:#A85A3C">Different body.</span></div>
+      <img class="art" src="art/d-oneline.png" style="left:0;width:100cqw;top:44cqw;height:140cqw;mix-blend-mode:multiply" alt="">
+    </div><figcaption>Hook · 0s</figcaption></figure>
+
+    <figure><div class="cell D" style="background:#C2714F;color:#FBF8F4">
+      <div class="h" style="top:8cqw">Lift a little more each week.</div>
+      <svg class="line" viewBox="0 0 100 100" style="left:6cqw;top:80cqw;width:88cqw;height:88cqw"><path d="M-10 92 C10 92 14 60 22 60 L22 40 L30 40 L30 50 L70 50 L70 40 L78 40 L78 60 L70 60 L70 50 M30 50 L30 60 L22 60 M78 60 C86 62 84 92 110 92" fill="none" stroke="#FBF8F4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 90 V82 M38 90 V76 M54 90 V70 M70 90 V62" stroke="#FBF8F4" stroke-width="5" stroke-linecap="round" opacity=".9"/></svg>
+    </div><figcaption>Strength · 16s</figcaption></figure>
+
+    <figure><div class="cell D" style="background:#3B322C;color:#FBF8F4">
+      <svg class="line" viewBox="0 0 100 100" style="left:0;top:20cqw;width:100cqw;height:60cqw"><path d="M-5 30 C20 10 40 60 60 40 C70 30 74 46 76 52" fill="none" stroke="#C08E82" stroke-width="1" stroke-linecap="round"/><circle cx="77" cy="54" r="4" fill="#C08E82"/></svg>
+      <div class="h" style="top:72cqw;text-align:center;font-size:27cqw">keel</div>
+      <div class="h" style="top:104cqw;text-align:center;font-size:10cqw;color:#F0C9A8">Strong for life.</div>
+      <div class="abs" style="left:18cqw;right:18cqw;top:140cqw;text-align:center;background:#FBF8F4;color:#3B322C;font-weight:700;font-size:5.6cqw;padding:3cqw 0;border-radius:99px">Start your free trial</div>
+    </div><figcaption>End · 22s</figcaption></figure>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

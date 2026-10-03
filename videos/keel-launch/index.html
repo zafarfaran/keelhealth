@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1920">
+<title>Keel launch</title>
+<script src="assets/gsap.min.js"></script>
+<script src="assets/lineart.js"></script>
+<script src="assets/film.js"></script>
+<style>
+  @font-face { font-family: Baloo; src: url(assets/fonts/Baloo2-var.woff2) format('woff2'); font-weight: 400 800; }
+  @font-face { font-family: Plex; src: url(assets/fonts/IBMPlexMono-500.woff2) format('woff2'); font-weight: 500; }
+  :root {
+    --ink: #3B322C; --ivory: #FBF8F4; --almond: #EDE3D6; --text2: #5D534B; --label: #6D6157;
+    --terra: #C2714F; --terra-deep: #A85A3C; --clay: #C08E82; --apricot: #F0C9A8; --honey: #E8C05F;
+    --plum: #A9647A; --olive: #9AA88F; --tint-olive: #F4F6F1; --border: #E6DCCE;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ivory); }
+  #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--ivory); font-family: Baloo, system-ui, sans-serif; color: var(--ink); }
+
+  /* the storyboard world: 4 cols x 3 rows, cell 1320 x 2160 */
+  #world {
+    position: absolute; left: 0; top: 0; width: 5040px; height: 6240px; transform-origin: 0 0;
+    background-color: var(--ivory);
+    background-image: radial-gradient(circle, rgba(168,150,138,.32) 2.6px, transparent 3.2px);
+    background-size: 40px 40px;
+  }
+  .panel { position: absolute; width: 1080px; height: 1920px; }
+  .panel::before { content: ''; position: absolute; inset: 32px; border: 4px dashed rgba(168,150,138,.5); border-radius: 22px; }
+  .pn { position: absolute; top: 56px; left: 66px; font-family: Plex; font-size: 30px; letter-spacing: .1em; color: var(--label); }
+
+  .h { position: absolute; left: 86px; right: 86px; top: 130px; font-weight: 800; font-size: 116px; line-height: 1.14; letter-spacing: -0.02em; }
+  .w { display: inline-block; transform-origin: 50% 100%; }
+  .em { position: relative; display: inline-block; color: var(--terra-deep); isolation: isolate; transform-origin: 50% 100%; }
+  .hl { position: absolute; left: -.06em; right: -.06em; bottom: .12em; height: .34em; background: var(--apricot); opacity: .9; z-index: -1; transform-origin: 0 50%; border-radius: .08em; }
+  .dot { display: inline-block; width: .26em; height: .26em; border-radius: 50%; background: var(--clay); margin-left: .05em; }
+  .sub { position: absolute; left: 86px; right: 86px; font-weight: 700; font-size: 64px; line-height: 1.3; text-align: center; }
+  .mono { font-family: Plex; font-size: 34px; letter-spacing: .06em; text-transform: uppercase; color: var(--label); }
+
+  .sketch { position: absolute; mix-blend-mode: multiply; }
+  .inked { position: absolute; background: #fff; border: 8px solid var(--ink); border-radius: 32px; box-shadow: 15px 15px 0 var(--clay); }
+  .chip { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; font-size: 40px; padding: 10px 28px; border-radius: 999px; border: 5px solid var(--ink); background: #fff; margin: 0 10px 14px 0; }
+  .chip svg { width: 44px; height: 44px; }
+  .ico, .emo { position: absolute; }
+  .ico svg, .emo svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .emo svg { filter: drop-shadow(8px 10px 0 rgba(59,50,44,.22)); }
+  svg.ov { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; pointer-events: none; }
+
+  /* slot swap on panel 1 */
+  .slot { display: inline-block; position: relative; width: 380px; height: 1.02em; vertical-align: top; perspective: 600px; }
+  .slot .em { position: absolute; left: 0; top: 0; backface-visibility: hidden; }
+
+  /* overlays that sit on top of the camera */
+  .overlay { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none; overflow: visible; }
+  #caption { position: absolute; left: 60px; right: 60px; top: 1560px; text-align: center; font-weight: 800; font-size: 84px; line-height: 1.2; letter-spacing: -0.02em; }
+</style>
+</head>
+<body>
+<!-- Keel emoji + icons -->
+<svg data-hf-id="hf-30au" width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs data-hf-id="hf-mh0t">
+    <g data-hf-id="hf-pkh0" id="face"><circle data-hf-id="hf-z0ia" cx="50" cy="52" r="40" fill="#E8C05F" stroke="#3B322C" stroke-width="5" /></g>
+    <path data-hf-id="hf-ffpi" id="heart" d="M0 6 C0 -2 10 -4 12 3 C14 -4 24 -2 24 6 C24 14 12 20 12 22 C12 20 0 14 0 6Z" />
+  </defs>
+  <symbol data-hf-id="hf-u8tl" id="e-puzzled" viewBox="0 0 100 100"><use data-hf-id="hf-puw3" href="#face" /><g data-hf-id="hf-ttov" fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path data-hf-id="hf-f6ks" d="M28 34 Q36 26 45 32" /><path data-hf-id="hf-5yv2" d="M57 38 L71 37" /><path data-hf-id="hf-znd7" d="M38 71 Q44 65 50 71 T63 70" /></g><circle data-hf-id="hf-9t4x" cx="38" cy="47" r="4.5" fill="#3B322C" /><circle data-hf-id="hf-c5zs" cx="63" cy="48" r="4.5" fill="#3B322C" /><path data-hf-id="hf-j87c" d="M82 6 Q94 4 93 13 Q92 19 86 20 L86 25 M86 31 L86 32" fill="none" stroke="#C2714F" stroke-width="5" stroke-linecap="round" /></symbol>
+  <symbol data-hf-id="hf-192f" id="e-meh" viewBox="0 0 100 100"><use data-hf-id="hf-ovqb" href="#face" /><g data-hf-id="hf-y6jz" fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path data-hf-id="hf-q6vc" d="M29 47 H47" /><path data-hf-id="hf-rdc0" d="M54 47 H72" /><path data-hf-id="hf-d2iv" d="M38 70 H62" /></g><circle data-hf-id="hf-e74u" cx="40" cy="42" r="4" fill="#3B322C" /><circle data-hf-id="hf-8j73" cx="65" cy="42" r="4" fill="#3B322C" /></symbol>
+  <symbol data-hf-id="hf-wm7v" id="e-sleepy" viewBox="0 0 100 100"><use data-hf-id="hf-ohfa" href="#face" /><g data-hf-id="hf-qv73" fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-az3x" d="M29 49 Q37 56 45 49" /><path data-hf-id="hf-ssne" d="M55 49 Q63 56 71 49" /><circle data-hf-id="hf-icbl" cx="50" cy="70" r="5" /><path data-hf-id="hf-xvbu" d="M72 10 H84 L72 22 H84" stroke="#A9647A" /><path data-hf-id="hf-8qcm" d="M86 -2 H93 L86 6 H93" stroke="#A9647A" stroke-width="4" /></g></symbol>
+  <symbol data-hf-id="hf-xotn" id="e-tired" viewBox="0 0 100 100"><use data-hf-id="hf-o349" href="#face" /><g data-hf-id="hf-xs8y" fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path data-hf-id="hf-6n1i" d="M29 43 L44 36" /><path data-hf-id="hf-tcqy" d="M71 43 L56 36" /><path data-hf-id="hf-h4jl" d="M35 71 Q42 64 50 71 Q58 78 65 71" /></g><circle data-hf-id="hf-z1w1" cx="38" cy="50" r="4.5" fill="#3B322C" /><circle data-hf-id="hf-yiqa" cx="62" cy="50" r="4.5" fill="#3B322C" /><path data-hf-id="hf-8fhw" d="M84 18 Q92 31 84 36 Q76 31 84 18Z" fill="#D5E2EE" stroke="#3B322C" stroke-width="3.5" stroke-linejoin="round" /></symbol>
+  <symbol data-hf-id="hf-501z" id="e-dizzy" viewBox="0 0 100 100"><use data-hf-id="hf-not8" href="#face" /><g data-hf-id="hf-z0u9" fill="none" stroke="#3B322C" stroke-width="4.5" stroke-linecap="round"><path data-hf-id="hf-bhw4" d="M38 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5" /><path data-hf-id="hf-rlhw" d="M63 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5" /><path data-hf-id="hf-5koy" d="M37 72 Q43 67 50 72 Q57 77 63 72" /></g></symbol>
+  <symbol data-hf-id="hf-mztk" id="e-wow" viewBox="0 0 100 100"><use data-hf-id="hf-nai7" href="#face" /><circle data-hf-id="hf-y6a7" cx="37" cy="45" r="7.5" fill="#fff" stroke="#3B322C" stroke-width="4" /><circle data-hf-id="hf-gytw" cx="63" cy="45" r="7.5" fill="#fff" stroke="#3B322C" stroke-width="4" /><circle data-hf-id="hf-pg58" cx="38" cy="46" r="3.4" fill="#3B322C" /><circle data-hf-id="hf-jhvl" cx="64" cy="46" r="3.4" fill="#3B322C" /><ellipse data-hf-id="hf-lhcv" cx="50" cy="71" rx="7" ry="9" fill="#3B322C" /></symbol>
+  <symbol data-hf-id="hf-726e" id="e-yum" viewBox="0 0 100 100"><use data-hf-id="hf-mw76" href="#face" /><g data-hf-id="hf-xdxx" fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path data-hf-id="hf-zr13" d="M29 51 Q37 41 45 51" /><path data-hf-id="hf-jsz4" d="M55 51 Q63 41 71 51" /><path data-hf-id="hf-1l80" d="M33 62 Q50 80 67 62" /></g><path data-hf-id="hf-1h13" d="M52 70 Q57 84 65 68" fill="#C08E82" stroke="#3B322C" stroke-width="4" stroke-linejoin="round" /></symbol>
+  <symbol data-hf-id="hf-d4uj" id="e-happy" viewBox="0 0 100 100"><use data-hf-id="hf-ifx1" href="#face" /><circle data-hf-id="hf-v4xu" cx="28" cy="62" r="6.5" fill="#C08E82" opacity=".8" /><circle data-hf-id="hf-ow3r" cx="72" cy="62" r="6.5" fill="#C08E82" opacity=".8" /><g data-hf-id="hf-0634" fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path data-hf-id="hf-pmm7" d="M30 50 Q38 41 46 50" /><path data-hf-id="hf-al9z" d="M54 50 Q62 41 70 50" /><path data-hf-id="hf-z677" d="M38 64 Q50 76 62 64" /></g></symbol>
+  <symbol data-hf-id="hf-o0z5" id="e-love" viewBox="0 0 100 100"><use data-hf-id="hf-i1m0" href="#face" /><use data-hf-id="hf-7f9p" href="#heart" x="25" y="36" fill="#C2714F" stroke="#3B322C" stroke-width="3" /><use data-hf-id="hf-bz9e" href="#heart" x="51" y="36" fill="#C2714F" stroke="#3B322C" stroke-width="3" /><path data-hf-id="hf-y9ml" d="M33 63 Q50 86 67 63 Z" fill="#3B322C" stroke="#3B322C" stroke-width="4" stroke-linejoin="round" /></symbol>
+  <symbol data-hf-id="hf-60kf" id="e-proud" viewBox="0 0 100 100"><use data-hf-id="hf-hnaz" href="#face" /><circle data-hf-id="hf-q31t" cx="28" cy="62" r="6" fill="#C08E82" opacity=".8" /><circle data-hf-id="hf-lpi0" cx="72" cy="62" r="6" fill="#C08E82" opacity=".8" /><g data-hf-id="hf-zrs3" fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path data-hf-id="hf-q6db" d="M30 49 Q38 41 46 49" /><path data-hf-id="hf-bzx0" d="M34 62 Q50 80 66 62" /></g><circle data-hf-id="hf-duzq" cx="62" cy="47" r="4.5" fill="#3B322C" /></symbol>
+  <symbol data-hf-id="hf-uedt" id="i-fork" viewBox="0 0 100 100"><g data-hf-id="hf-iyz1" fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-1tay" d="M30 12 V40 Q30 50 38 50 V88" /><path data-hf-id="hf-b17m" d="M46 12 V40 Q46 50 38 50" /><path data-hf-id="hf-hc7a" d="M38 12 V36" /><path data-hf-id="hf-p8b0" d="M68 88 V12 Q82 22 80 50 H68" /></g></symbol>
+  <symbol data-hf-id="hf-crsk" id="i-shoe" viewBox="0 0 100 100"><g data-hf-id="hf-fyyp" fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-o7gw" d="M10 70 V36 Q22 40 34 34 Q46 56 74 56 Q92 58 92 72 V76 H10Z" /><path data-hf-id="hf-ixmu" d="M40 46 L48 40 M48 52 L56 46" /></g></symbol>
+  <symbol data-hf-id="hf-o2r4" id="i-camera" viewBox="0 0 100 100"><g data-hf-id="hf-t3m5" fill="none" stroke="#3B322C" stroke-width="7" stroke-linejoin="round"><rect data-hf-id="hf-vs3o" x="10" y="30" width="80" height="54" rx="12" fill="#fff" /><path data-hf-id="hf-k61h" d="M34 30 L40 18 H60 L66 30" /><circle data-hf-id="hf-mom1" cx="50" cy="57" r="15" /></g><circle data-hf-id="hf-omof" cx="76" cy="42" r="4" fill="#C2714F" /></symbol>
+  <symbol data-hf-id="hf-n64b" id="i-sparkle" viewBox="0 0 100 100"><path data-hf-id="hf-r2a6" d="M50 6 Q55 45 94 50 Q55 55 50 94 Q45 55 6 50 Q45 45 50 6Z" fill="#E8C05F" stroke="#3B322C" stroke-width="5" stroke-linejoin="round" /></symbol>
+  <symbol data-hf-id="hf-w2z2" id="i-moon" viewBox="0 0 100 100"><path data-hf-id="hf-ef2x" d="M64 12 A40 40 0 1 0 88 66 A32 32 0 0 1 64 12Z" fill="#E3DAEF" stroke="#3B322C" stroke-width="6" stroke-linejoin="round" /></symbol>
+  <symbol data-hf-id="hf-sf57" id="i-heat" viewBox="0 0 100 100"><g data-hf-id="hf-8zyw" fill="none" stroke="#A9647A" stroke-width="7" stroke-linecap="round"><path data-hf-id="hf-b4iu" d="M28 88 Q16 70 28 52 Q40 34 28 14" /><path data-hf-id="hf-cmsf" d="M50 88 Q38 70 50 52 Q62 34 50 14" /><path data-hf-id="hf-djts" d="M72 88 Q60 70 72 52 Q84 34 72 14" /></g></symbol>
+  <symbol data-hf-id="hf-hp0e" id="i-cloud" viewBox="0 0 100 100"><path data-hf-id="hf-593z" d="M24 74 Q8 74 10 60 Q12 46 28 48 Q30 28 50 28 Q68 28 72 44 Q90 42 92 58 Q92 74 76 74Z" fill="#fff" stroke="#3B322C" stroke-width="6" stroke-linejoin="round" /><g data-hf-id="hf-6to5" stroke="#A8968A" stroke-width="5" stroke-linecap="round"><path data-hf-id="hf-mdv8" d="M30 86 H62" /><path data-hf-id="hf-n0n7" d="M42 96 H78" /></g></symbol>
+  <symbol data-hf-id="hf-ijrq" id="i-dumbbell" viewBox="0 0 100 100"><g data-hf-id="hf-h5vs" fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-ch7w" d="M30 50 H70" /><rect data-hf-id="hf-o91p" x="14" y="30" width="16" height="40" rx="5" fill="#C2714F" /><rect data-hf-id="hf-2gzz" x="70" y="30" width="16" height="40" rx="5" fill="#C2714F" /><path data-hf-id="hf-5z4z" d="M6 42 V58 M94 42 V58" /></g></symbol>
+  <symbol data-hf-id="hf-gje2" id="i-up" viewBox="0 0 100 100"><g data-hf-id="hf-t6aa" fill="none" stroke="#3B322C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-dwi9" d="M50 88 V14" /><path data-hf-id="hf-qkr4" d="M24 40 L50 14 L76 40" /></g></symbol>
+  <symbol data-hf-id="hf-vi01" id="i-heart" viewBox="0 0 100 100"><path data-hf-id="hf-ch3w" d="M50 86 C20 64 8 50 8 34 C8 18 22 10 34 12 C42 13 48 20 50 26 C52 20 58 13 66 12 C78 10 92 18 92 34 C92 50 80 64 50 86Z" fill="#C2714F" stroke="#3B322C" stroke-width="6" stroke-linejoin="round" /></symbol>
+  <symbol data-hf-id="hf-4z6g" id="i-pan" viewBox="0 0 100 100"><g data-hf-id="hf-grkr" fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-sf9u" d="M8 50 H70 Q70 76 44 76 H34 Q8 76 8 50Z" fill="#fff" /><path data-hf-id="hf-khia" d="M70 54 H94" /><path data-hf-id="hf-udxx" d="M26 38 Q22 30 28 22 M42 38 Q38 30 44 22 M58 38 Q54 30 60 22" stroke="#A8968A" stroke-width="5" /></g></symbol>
+  <symbol data-hf-id="hf-fu6l" id="i-check" viewBox="0 0 100 100"><circle data-hf-id="hf-ggop" cx="50" cy="50" r="42" fill="#9AA88F" stroke="#3B322C" stroke-width="6" /><path data-hf-id="hf-6zoq" d="M30 52 L44 66 L72 36" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" /></symbol>
+  <symbol data-hf-id="hf-9odx" id="i-star" viewBox="0 0 100 100"><path data-hf-id="hf-8eqd" d="M50 8 L61 36 L92 38 L68 58 L76 90 L50 72 L24 90 L32 58 L8 38 L39 36Z" fill="#E8C05F" stroke="#3B322C" stroke-width="6" stroke-linejoin="round" /></symbol>
+</svg>
+
+<div data-hf-id="hf-jy5j" id="root" data-composition-id="main" data-start="0" data-duration="26.5" data-width="1080" data-height="1920">
+  <audio data-hf-id="hf-wn5f" id="bgm" src="assets/bgm/track.mp3" data-start="0" data-duration="26.5" data-track-index="9" data-volume="0.8"></audio>
+
+  <div data-hf-id="hf-k6zw" id="world" data-layout-allow-overflow="">
+    <svg data-hf-id="hf-mbpg" id="arrows" class="overlay" style="width:5040px;height:6240px" viewBox="0 0 5040 6240" />
+
+    <!-- 01 Same meals (0,0) -->
+    <section data-hf-id="hf-ruwg" class="panel" id="p1" style="left:0;top:0">
+      <span data-hf-id="hf-8pbs" class="pn">01</span>
+      <div data-hf-id="hf-7r9x" class="h l1"><span data-hf-id="hf-lysg" data-layout-allow-overlap="" class="w">Same</span> <span data-hf-id="hf-rf0y" data-layout-allow-overlap="" class="w slot"><span data-hf-id="hf-znem" class="em sw1">meals.<i data-hf-id="hf-18w0" class="hl"></i></span><span data-hf-id="hf-7dp3" class="em sw2">walks.<i data-hf-id="hf-m9mg" class="hl"></i></span></span></div>
+      <div data-hf-id="hf-c8vb" class="h l2" style="top:248px"><span data-hf-id="hf-f88z" data-layout-allow-overlap="" class="w">Different</span> <span data-hf-id="hf-qb22" data-layout-allow-overlap="" class="w">body<span data-hf-id="hf-nfka" class="dot" id="dot1"></span></span></div>
+      <div data-hf-id="hf-o7g7" class="ico" id="i-fork1" style="right:80px;top:130px;width:130px;height:130px"><svg data-hf-id="hf-vwu9"><use data-hf-id="hf-cd5m" href="#i-fork" /></svg></div>
+      <div data-hf-id="hf-jlu5" class="ico" id="i-shoe1" style="right:70px;top:130px;width:150px;height:150px;transform:rotate(-8deg)"><svg data-hf-id="hf-8vth"><use data-hf-id="hf-7jev" href="#i-shoe" /></svg></div>
+      <div data-hf-id="hf-54fu" class="sketch" id="d01" data-src="assets/draw/01-kitchen.png" data-w="950" data-h="1296" style="left:65px;top:560px;width:950px;height:1296px"></div>
+      <div data-hf-id="hf-yx55" class="emo" style="left:650px;top:600px;width:260px;height:260px;transform:rotate(8deg)"><svg data-hf-id="hf-lnyh" id="em1"><use data-hf-id="hf-e1qu" href="#e-puzzled" /></svg></div>
+    </section>
+
+    <!-- 02 Built for 25 (1,0) -->
+    <section data-hf-id="hf-piqd" class="panel" id="p2" style="left:1320px;top:0">
+      <span data-hf-id="hf-7iep" class="pn">02</span>
+      <div data-hf-id="hf-446i" class="h" style="font-size:106px"><span data-hf-id="hf-mm25" data-layout-allow-overlap="" class="w">Most</span> <span data-hf-id="hf-9y62" data-layout-allow-overlap="" class="w">apps</span> <span data-hf-id="hf-bfpb" data-layout-allow-overlap="" class="w">were</span> <span data-hf-id="hf-3r72" data-layout-allow-overlap="" class="w">built</span> <span data-hf-id="hf-bd8d" data-layout-allow-overlap="" class="w">for</span> <span data-hf-id="hf-b9hk" data-layout-allow-overlap="" class="w em">25-year-olds.<i data-hf-id="hf-l2pd" class="hl"></i></span></div>
+      <div data-hf-id="hf-o385" class="sketch" id="d02" data-src="assets/draw/02-phone.png" data-w="907" data-h="907" style="left:86px;top:670px;width:907px;height:907px"></div>
+      <svg data-hf-id="hf-3s6m" class="ov" viewBox="0 0 1080 1920"><g data-hf-id="hf-srso" id="strike" fill="none" stroke="#C2714F" stroke-width="24" stroke-linecap="round"><path data-hf-id="hf-rlji" d="M238 994 C430 1080 650 950 864 1296" /><path data-hf-id="hf-oqxz" d="M216 1296 C430 1166 670 1426 886 1080" /></g></svg>
+      <div data-hf-id="hf-n3wp" class="emo" style="right:80px;top:1420px;width:260px;height:260px;transform:rotate(-8deg)"><svg data-hf-id="hf-pm2i" id="em2"><use data-hf-id="hf-fh2s" href="#e-meh" /></svg></div>
+    </section>
+
+    <!-- 03 62g (2,0) -->
+    <section data-hf-id="hf-448a" class="panel" id="p3" style="left:2640px;top:0">
+      <span data-hf-id="hf-7wpq" class="pn">03</span>
+      <svg data-hf-id="hf-hlki" class="ov" viewBox="0 0 1080 1920"><path data-hf-id="hf-n2q9" id="ring" d="M540 280 C842 270 950 497 929 670 C907 886 713 1015 518 1004 C292 994 140 842 151 637 C162 432 324 292 583 313" fill="none" stroke="#C08E82" stroke-width="26" stroke-linecap="round" /></svg>
+      <div data-hf-id="hf-gijh" class="h" style="top:430px;text-align:center;font-size:330px;letter-spacing:-0.04em;line-height:1"><span data-hf-id="hf-bs0c" id="n62">0</span><span data-hf-id="hf-w9qz" style="font-size:.5em">g</span></div>
+      <div data-hf-id="hf-98cy" class="sub" style="top:1150px"><span data-hf-id="hf-pndj" data-layout-allow-overlap="" class="w">of</span> <span data-hf-id="hf-mpr9" data-layout-allow-overlap="" class="w">protein</span> <span data-hf-id="hf-73dx" data-layout-allow-overlap="" class="w">a</span> <span data-hf-id="hf-ggpa" data-layout-allow-overlap="" class="w">day.</span><br data-hf-id="hf-x5px"><span data-hf-id="hf-bqox" data-layout-allow-overlap="" class="w">Most</span> <span data-hf-id="hf-tgx8" data-layout-allow-overlap="" class="w">women</span> <span data-hf-id="hf-w5uk" data-layout-allow-overlap="" class="w">over</span> <span data-hf-id="hf-jndm" data-layout-allow-overlap="" class="w">40.*</span></div>
+      <div data-hf-id="hf-5c8m" class="sketch" id="d03" data-src="assets/draw/03-breakfast.png" data-w="690" data-h="520" style="left:195px;top:1320px;width:690px;height:520px"></div>
+      <div data-hf-id="hf-6tq9" class="emo" style="right:90px;top:260px;width:220px;height:220px;transform:rotate(10deg)"><svg data-hf-id="hf-xm5n" id="em3"><use data-hf-id="hf-nuzv" href="#e-wow" /></svg></div>
+    </section>
+
+    <!-- 04 Comic strip (3,0) -->
+    <section data-hf-id="hf-v6vj" class="panel" id="p4" style="left:3960px;top:0">
+      <span data-hf-id="hf-6psn" class="pn">04</span>
+      <div data-hf-id="hf-nk8v" class="inked card" id="c1" style="left:76px;width:928px;top:108px;height:540px;box-shadow:15px 15px 0 #A9647A;transform:rotate(-1.5deg)">
+        <div data-hf-id="hf-uqg8" class="sketch" id="d04a" data-src="assets/draw/04a-night.png" data-w="900" data-h="520" style="left:6px;top:6px;width:900px;height:520px"></div>
+        <span data-hf-id="hf-c6k6" class="chip" style="position:absolute;left:22px;top:22px"><svg data-hf-id="hf-e4po"><use data-hf-id="hf-uwxp" href="#i-moon" /></svg>3am. Wide awake.</span>
+        <div data-hf-id="hf-rv19" class="ico" id="heat" style="left:60px;bottom:40px;width:100px;height:100px"><svg data-hf-id="hf-dqen"><use data-hf-id="hf-qmz8" href="#i-heat" /></svg></div>
+        <div data-hf-id="hf-3p96" class="emo" style="right:24px;bottom:24px;width:180px;height:180px"><svg data-hf-id="hf-wovh" id="em4a"><use data-hf-id="hf-zni0" href="#e-sleepy" /></svg></div>
+      </div>
+      <div data-hf-id="hf-hr3k" class="inked card" id="c2" style="left:76px;width:928px;top:690px;height:540px;box-shadow:15px 15px 0 #A9647A;transform:rotate(1.2deg)">
+        <div data-hf-id="hf-58xk" class="sketch" id="d04b" data-src="assets/draw/04b-stairs.png" data-w="900" data-h="520" style="left:6px;top:6px;width:900px;height:520px"></div>
+        <span data-hf-id="hf-pzwn" class="chip" style="position:absolute;left:22px;top:22px">Stairs feel steeper.</span>
+        <div data-hf-id="hf-zttq" class="emo" style="right:24px;bottom:24px;width:180px;height:180px"><svg data-hf-id="hf-0mzi" id="em4b"><use data-hf-id="hf-jwro" href="#e-tired" /></svg></div>
+      </div>
+      <div data-hf-id="hf-te3w" class="inked card" id="c3" style="left:76px;width:928px;top:1272px;height:540px;box-shadow:15px 15px 0 #A9647A;transform:rotate(-0.8deg)">
+        <div data-hf-id="hf-a96v" class="sketch" id="d04c" data-src="assets/draw/04c-desk.png" data-w="900" data-h="520" style="left:6px;top:6px;width:900px;height:520px"></div>
+        <span data-hf-id="hf-ww6w" class="chip" style="position:absolute;left:22px;top:22px">4pm fog.</span>
+        <div data-hf-id="hf-udy6" class="ico" id="fog" style="left:330px;top:14px;width:140px;height:140px"><svg data-hf-id="hf-exbq"><use data-hf-id="hf-dszh" href="#i-cloud" /></svg></div>
+        <div data-hf-id="hf-084r" class="emo" style="right:24px;bottom:24px;width:180px;height:180px"><svg data-hf-id="hf-4l3j" id="em4c"><use data-hf-id="hf-akho" href="#e-dizzy" /></svg></div>
+      </div>
+    </section>
+
+    <!-- 05 Meet keel (3,1) -->
+    <section data-hf-id="hf-ulxf" class="panel" id="p5" style="left:3960px;top:2160px">
+      <span data-hf-id="hf-743o" class="pn">05</span>
+      <div data-hf-id="hf-1wx0" class="h wm" style="top:690px;text-align:center;font-size:290px;letter-spacing:-0.04em;line-height:1"><span data-hf-id="hf-4pjr" data-layout-allow-overlap="" class="w">k</span><span data-hf-id="hf-8om1" data-layout-allow-overlap="" class="w">e</span><span data-hf-id="hf-q0z1" data-layout-allow-overlap="" class="w">e</span><span data-hf-id="hf-5wgu" data-layout-allow-overlap="" class="w">l</span><span data-hf-id="hf-hp2s" class="dot" id="dot5" style="width:.2em;height:.2em"></span></div>
+      <div data-hf-id="hf-xv6v" class="sub" style="top:1110px;font-weight:600;color:#5D534B"><span data-hf-id="hf-743z" data-layout-allow-overlap="" class="w">Strength</span> <span data-hf-id="hf-kfxc" data-layout-allow-overlap="" class="w">&amp;</span> <span data-hf-id="hf-f7oi" data-layout-allow-overlap="" class="w">nutrition</span><br data-hf-id="hf-rsrt"><span data-hf-id="hf-ru5o" data-layout-allow-overlap="" class="w">after</span> <span data-hf-id="hf-yw1e" data-layout-allow-overlap="" class="w">40</span></div>
+      <div data-hf-id="hf-yxip" class="ico sp" id="sp1" style="left:170px;top:560px;width:130px;height:130px"><svg data-hf-id="hf-ej0p"><use data-hf-id="hf-jxxw" href="#i-sparkle" /></svg></div>
+      <div data-hf-id="hf-5y2q" class="ico sp" id="sp2" style="right:150px;top:640px;width:90px;height:90px"><svg data-hf-id="hf-fpxs"><use data-hf-id="hf-nve4" href="#i-sparkle" /></svg></div>
+      <div data-hf-id="hf-n23o" class="ico sp" id="sp3" style="right:250px;top:1300px;width:110px;height:110px"><svg data-hf-id="hf-fbmr"><use data-hf-id="hf-moh1" href="#i-sparkle" /></svg></div>
+    </section>
+
+    <!-- 06 Snap your plate (2,1) -->
+    <section data-hf-id="hf-kvic" class="panel" id="p6" style="left:2640px;top:2160px">
+      <span data-hf-id="hf-5x6l" class="pn">06</span>
+      <div data-hf-id="hf-kj5c" class="h"><span data-hf-id="hf-y7pu" data-layout-allow-overlap="" class="w">Snap</span> <span data-hf-id="hf-ygw1" data-layout-allow-overlap="" class="w">your</span> <span data-hf-id="hf-l9wi" data-layout-allow-overlap="" class="w em">plate.<i data-hf-id="hf-lh0e" class="hl"></i></span></div>
+      <div data-hf-id="hf-ymz4" class="sketch" id="d06" data-src="assets/draw/06-plate.png" data-w="907" data-h="907" style="left:86px;top:475px;width:907px;height:907px"></div>
+      <svg data-hf-id="hf-hzvj" class="ov" viewBox="0 0 1080 1920"><g data-hf-id="hf-h15l" id="vf" fill="none" stroke="#3B322C" stroke-width="16" stroke-linecap="round"><path data-hf-id="hf-ya5l" d="M108 562 V475 H194" /><path data-hf-id="hf-iyju" d="M886 475 H972 V562" /><path data-hf-id="hf-6r91" d="M972 1274 V1360 H886" /><path data-hf-id="hf-gxpe" d="M194 1360 H108 V1274" /></g><rect data-hf-id="hf-2rri" id="scan" x="130" y="480" width="820" height="10" rx="5" fill="#C2714F" /><rect data-hf-id="hf-bhf9" id="flash" x="108" y="475" width="864" height="885" fill="#fff" /></svg>
+      <div data-hf-id="hf-42q2" class="ico" id="cam6" style="right:86px;top:310px;width:140px;height:140px;transform:rotate(-10deg)"><svg data-hf-id="hf-63oa"><use data-hf-id="hf-q00r" href="#i-camera" /></svg></div>
+      <div data-hf-id="hf-vfnr" style="position:absolute;left:86px;right:86px;top:1440px">
+        <span data-hf-id="hf-p0gx" class="chip" id="ch1">Salmon · 28g</span><span data-hf-id="hf-qluf" class="chip" id="ch2">Rice</span><span data-hf-id="hf-pblf" class="chip" id="ch3">Greens</span><br data-hf-id="hf-szow">
+        <span data-hf-id="hf-3pe8" class="chip" id="ch4" style="background:#F4F6F1;border-color:#7E8C73"><svg data-hf-id="hf-5pd9"><use data-hf-id="hf-yk3y" href="#i-check" /></svg>Fits your day</span>
+      </div>
+      <div data-hf-id="hf-1ruh" class="emo" style="right:80px;top:1580px;width:210px;height:210px;transform:rotate(8deg)"><svg data-hf-id="hf-asgu" id="em6"><use data-hf-id="hf-sp59" href="#e-yum" /></svg></div>
+    </section>
+
+    <!-- 07 Close the gap (1,1) -->
+    <section data-hf-id="hf-julx" class="panel" id="p7" style="left:1320px;top:2160px">
+      <span data-hf-id="hf-6bhm" class="pn">07</span>
+      <div data-hf-id="hf-3gso" class="h"><span data-hf-id="hf-lrz5" data-layout-allow-overlap="" class="w">See</span> <span data-hf-id="hf-11e5" data-layout-allow-overlap="" class="w">the</span> <span data-hf-id="hf-86no" data-layout-allow-overlap="" class="w">gap.</span><br data-hf-id="hf-sldv"><span data-hf-id="hf-4edl" data-layout-allow-overlap="" class="w em">Close it.<i data-hf-id="hf-ka3b" class="hl"></i></span></div>
+      <div data-hf-id="hf-9mgi" class="inked" id="gapcard" style="left:86px;right:86px;top:700px;padding:64px">
+        <div data-hf-id="hf-ss49" class="mono">Protein today</div>
+        <div data-hf-id="hf-lgsu" style="font-weight:800;font-size:150px;letter-spacing:-0.03em;line-height:1.2;margin:40px 0 40px"><span data-hf-id="hf-a7f9" id="n104">62</span>g <span data-hf-id="hf-5ls9" style="color:#6D6157;font-weight:600;font-size:.6em">/ 104g</span></div>
+        <div data-hf-id="hf-78v8" style="height:44px;border-radius:99px;background:#EDE3D6;overflow:hidden"><div data-hf-id="hf-v5sk" id="bar" style="width:100%;height:100%;background:#C08E82;transform-origin:0 50%;border-radius:99px"></div></div>
+        <div data-hf-id="hf-3co1" class="mono" style="margin-top:30px">Your target · 104g</div>
+      </div>
+      <div data-hf-id="hf-0nzp" class="ico" id="up7" style="left:130px;top:1340px;width:130px;height:130px"><svg data-hf-id="hf-x933"><use data-hf-id="hf-tu3p" href="#i-up" /></svg></div>
+      <div data-hf-id="hf-60zy" class="emo" style="right:110px;top:1320px;width:260px;height:260px;transform:rotate(-6deg)"><svg data-hf-id="hf-isjz" id="em7"><use data-hf-id="hf-3014" href="#e-happy" /></svg></div>
+    </section>
+
+    <!-- 08 Coach (0,1) -->
+    <section data-hf-id="hf-09qg" class="panel" id="p8" style="left:0;top:2160px">
+      <span data-hf-id="hf-bhgz" class="pn">08</span>
+      <div data-hf-id="hf-7c4g" class="h" style="font-size:104px"><span data-hf-id="hf-jt6t" data-layout-allow-overlap="" class="w">A</span> <span data-hf-id="hf-y0pk" data-layout-allow-overlap="" class="w">coach</span> <span data-hf-id="hf-tttb" data-layout-allow-overlap="" class="w">that</span> <span data-hf-id="hf-3xdy" data-layout-allow-overlap="" class="w">knows</span> <span data-hf-id="hf-6xw5" data-layout-allow-overlap="" class="w">your</span> <span data-hf-id="hf-zyry" data-layout-allow-overlap="" class="w em">symptoms.<i data-hf-id="hf-koec" class="hl"></i></span></div>
+      <div data-hf-id="hf-3sg9" class="sketch" id="d08" data-src="assets/draw/08-sofa.png" data-w="713" data-h="1058" style="left:330px;top:840px;width:713px;height:1058px"></div>
+      <div data-hf-id="hf-n64e" class="inked" id="b1" style="left:76px;width:680px;top:600px;padding:36px 44px;font-size:48px;font-weight:600;line-height:1.15;box-shadow:15px 15px 0 #A9647A">Slept badly. Hot flushes again.</div>
+      <div data-hf-id="hf-c2sl" class="emo" style="left:690px;top:540px;width:150px;height:150px"><svg data-hf-id="hf-ww89" id="em8a"><use data-hf-id="hf-y0rg" href="#e-tired" /></svg></div>
+      <div data-hf-id="hf-aodg" class="inked" id="dots" style="left:180px;top:900px;padding:30px 44px;box-shadow:15px 15px 0 #E8C05F"><svg data-hf-id="hf-av4s" width="120" height="30" viewBox="0 0 120 30"><circle data-hf-id="hf-7u60" class="td" cx="15" cy="15" r="12" fill="#3B322C" /><circle data-hf-id="hf-gjoc" class="td" cx="60" cy="15" r="12" fill="#3B322C" /><circle data-hf-id="hf-2ddo" class="td" cx="105" cy="15" r="12" fill="#3B322C" /></svg></div>
+      <div data-hf-id="hf-qrax" class="inked" id="b2" style="left:170px;right:76px;top:880px;padding:36px 44px 36px 130px;font-size:48px;font-weight:600;line-height:1.15;box-shadow:15px 15px 0 #E8C05F">Lighter session today. Protein at breakfast.</div>
+      <div data-hf-id="hf-c18u" class="ico" id="sp8" style="left:200px;top:905px;width:90px;height:90px"><svg data-hf-id="hf-xne4"><use data-hf-id="hf-n2s2" href="#i-sparkle" /></svg></div>
+      <div data-hf-id="hf-co9m" class="emo" style="left:70px;top:1300px;width:220px;height:220px;transform:rotate(-8deg)"><svg data-hf-id="hf-0uca" id="em8b"><use data-hf-id="hf-y8dc" href="#e-happy" /></svg></div>
+    </section>
+
+    <!-- 09 Lift (0,2) -->
+    <section data-hf-id="hf-lcbp" class="panel" id="p9" style="left:0;top:4320px">
+      <span data-hf-id="hf-bvs0" class="pn">09</span>
+      <div data-hf-id="hf-29vl" class="h"><span data-hf-id="hf-cxpj" data-layout-allow-overlap="" class="w">Lift</span> <span data-hf-id="hf-8w8p" data-layout-allow-overlap="" class="w">a</span> <span data-hf-id="hf-kcq2" data-layout-allow-overlap="" class="w">little</span> <span data-hf-id="hf-03sl" data-layout-allow-overlap="" class="w em">more<i data-hf-id="hf-jhh9" class="hl"></i></span> <span data-hf-id="hf-2mkb" data-layout-allow-overlap="" class="w">each</span> <span data-hf-id="hf-eovw" data-layout-allow-overlap="" class="w">week.</span></div>
+      <div data-hf-id="hf-et2c" class="sketch" id="d09" data-src="assets/draw/09-squat.png" data-w="640" data-h="990" style="left:20px;top:860px;width:640px;height:990px"></div>
+      <svg data-hf-id="hf-ie6k" class="ov" viewBox="0 0 1080 1920"><g data-hf-id="hf-z5la" fill="#C2714F" stroke="#3B322C" stroke-width="6"><rect data-hf-id="hf-uktf" class="cbar" x="650" y="1555" width="60" height="130" rx="8" /><rect data-hf-id="hf-euc1" class="cbar" x="728" y="1512" width="60" height="173" rx="8" /><rect data-hf-id="hf-32kn" class="cbar" x="806" y="1469" width="60" height="216" rx="8" /><rect data-hf-id="hf-06hr" class="cbar" x="884" y="1426" width="60" height="259" rx="8" /><rect data-hf-id="hf-rqaf" class="cbar" x="962" y="1361" width="60" height="324" rx="8" /></g><path data-hf-id="hf-ur70" d="M630 1688 H1040" stroke="#3B322C" stroke-width="10" stroke-linecap="round" /></svg>
+      <div data-hf-id="hf-w3tu" class="ico" id="db9" style="right:90px;top:560px;width:200px;height:200px;transform:rotate(-14deg)"><svg data-hf-id="hf-wgh1"><use data-hf-id="hf-emm9" href="#i-dumbbell" /></svg></div>
+      <div data-hf-id="hf-wpv4" class="emo" style="right:130px;top:900px;width:240px;height:240px;transform:rotate(8deg)"><svg data-hf-id="hf-d3k1" id="em9"><use data-hf-id="hf-2m2c" href="#e-proud" /></svg></div>
+      <div data-hf-id="hf-qlhm" class="ico" id="st1" style="right:200px;top:1250px;width:90px;height:90px"><svg data-hf-id="hf-wus2"><use data-hf-id="hf-weda" href="#i-star" /></svg></div>
+      <div data-hf-id="hf-nq6h" class="ico" id="st2" style="right:60px;top:1210px;width:80px;height:80px"><svg data-hf-id="hf-yub7"><use data-hf-id="hf-lbc2" href="#i-star" /></svg></div>
+    </section>
+
+    <!-- 10 Fridge to dinner (1,2) -->
+    <section data-hf-id="hf-wa7h" class="panel" id="p10" style="left:1320px;top:4320px">
+      <span data-hf-id="hf-7jcy" class="pn">10</span>
+      <div data-hf-id="hf-tat3" class="h" style="font-size:110px"><span data-hf-id="hf-fnda" data-layout-allow-overlap="" class="w">Photo</span> <span data-hf-id="hf-84t8" data-layout-allow-overlap="" class="w">your</span> <span data-hf-id="hf-apzb" data-layout-allow-overlap="" class="w">fridge.</span> <span data-hf-id="hf-6n7i" data-layout-allow-overlap="" class="w em">Get dinner.<i data-hf-id="hf-jvsa" class="hl"></i></span></div>
+      <div data-hf-id="hf-htiw" class="sketch" id="d10" data-src="assets/draw/10-fridge.png" data-w="648" data-h="972" style="left:40px;top:560px;width:648px;height:972px"></div>
+      <div data-hf-id="hf-f2do" class="ico" id="cam10" style="right:110px;top:560px;width:150px;height:150px;transform:rotate(8deg)"><svg data-hf-id="hf-z8m8"><use data-hf-id="hf-7cuz" href="#i-camera" /></svg></div>
+      <div data-hf-id="hf-c91z" class="inked" id="recipe" style="left:390px;right:66px;top:1180px;padding:44px">
+        <div data-hf-id="hf-rtt5" style="width:110px;height:110px;margin-bottom:10px"><svg data-hf-id="hf-5wki" style="width:100%;height:100%"><use data-hf-id="hf-egq3" href="#i-pan" /></svg></div>
+        <div data-hf-id="hf-gul3" style="font-weight:800;font-size:56px;line-height:1.08">Chicken, spinach &amp; feta</div>
+        <div data-hf-id="hf-c1xp" class="mono" style="margin-top:20px">38g protein · 20 min</div>
+      </div>
+      <div data-hf-id="hf-rk8e" class="emo" style="right:66px;top:1560px;width:240px;height:240px;transform:rotate(-8deg)"><svg data-hf-id="hf-2olf" id="em10"><use data-hf-id="hf-r3lu" href="#e-love" /></svg></div>
+    </section>
+
+    <!-- 12 Strong for life (2,2) -->
+    <section data-hf-id="hf-3a45" class="panel" id="p12" style="left:2640px;top:4320px">
+      <span data-hf-id="hf-8bz0" class="pn">12</span>
+      <div data-hf-id="hf-xluv" class="h wm2" style="top:640px;text-align:center;font-size:290px;letter-spacing:-0.04em;line-height:1"><span data-hf-id="hf-7907" data-layout-allow-overlap="" class="w">k</span><span data-hf-id="hf-r7w4" data-layout-allow-overlap="" class="w">e</span><span data-hf-id="hf-qtl3" data-layout-allow-overlap="" class="w">e</span><span data-hf-id="hf-eu82" data-layout-allow-overlap="" class="w">l</span><span data-hf-id="hf-tw3a" class="dot" id="dot12" style="width:.2em;height:.2em"></span></div>
+      <div data-hf-id="hf-crdn" class="h tag" style="top:1040px;text-align:center;font-size:110px"><span data-hf-id="hf-z1hl" data-layout-allow-overlap="" class="w">Strong</span> <span data-hf-id="hf-v6j5" data-layout-allow-overlap="" class="w">for</span> <span data-hf-id="hf-aadk" data-layout-allow-overlap="" class="w em">life.<i data-hf-id="hf-p1rn" class="hl"></i></span></div>
+      <div data-hf-id="hf-z2qr" class="ico" id="heart12" style="right:110px;top:950px;width:100px;height:100px;transform:rotate(12deg)"><svg data-hf-id="hf-y1p5"><use data-hf-id="hf-v1uy" href="#i-heart" /></svg></div>
+      <div data-hf-id="hf-y4ve" style="position:absolute;left:0;right:0;top:1440px;text-align:center"><span data-hf-id="hf-c4z2" id="cta" style="display:inline-block;background:#3B322C;color:#FBF8F4;font-weight:700;font-size:56px;padding:36px 76px;border-radius:999px">Start your free trial</span></div>
+    </section>
+
+    <svg data-hf-id="hf-s50c" id="loop" class="overlay" style="width:5040px;height:6240px" viewBox="0 0 5040 6240"><path data-hf-id="hf-7efd" id="loopPath" d="M300 -260 C2000 -420 4400 -380 5200 -100 C5420 1800 5420 4400 5240 6300 C3600 6560 1400 6560 -180 6340 C-420 4400 -420 1600 -220 -120" fill="none" stroke="#C08E82" stroke-width="56" stroke-linecap="round" /><path data-hf-id="hf-ah2t" id="loopHead" d="M-420 220 L-220 -120 L60 140" fill="none" stroke="#C08E82" stroke-width="56" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  </div>
+
+  <!-- camera overlays -->
+  <svg data-hf-id="hf-7nbw" id="speed-h" class="overlay" viewBox="0 0 1080 1920" style="opacity:0"><g data-hf-id="hf-hfx9" stroke="#3B322C" stroke-opacity=".28" stroke-width="8" stroke-linecap="round"><path data-hf-id="hf-dg1k" d="M120 300 H560" /><path data-hf-id="hf-ziwn" d="M420 520 H1000" /><path data-hf-id="hf-smk6" d="M60 820 H380" /><path data-hf-id="hf-a86n" d="M600 1060 H1040" /><path data-hf-id="hf-76tk" d="M160 1340 H640" /><path data-hf-id="hf-4s4i" d="M500 1600 H900" /><path data-hf-id="hf-w5yl" d="M80 1780 H420" /></g></svg>
+  <svg data-hf-id="hf-2k3y" id="speed-v" class="overlay" viewBox="0 0 1080 1920" style="opacity:0"><g data-hf-id="hf-d3w1" stroke="#3B322C" stroke-opacity=".28" stroke-width="8" stroke-linecap="round"><path data-hf-id="hf-y9y5" d="M160 200 V700" /><path data-hf-id="hf-rvg4" d="M380 900 V1600" /><path data-hf-id="hf-o6gv" d="M620 120 V560" /><path data-hf-id="hf-uqe1" d="M820 700 V1400" /><path data-hf-id="hf-xvyj" d="M980 1300 V1820" /><path data-hf-id="hf-rgub" d="M90 1200 V1700" /></g></svg>
+  <svg data-hf-id="hf-649t" id="cover" data-layout-allow-overflow="" class="overlay" viewBox="0 0 1080 1920"><path data-hf-id="hf-f0wv" id="coverPath" d="M-200 -60 L1280 160 L-200 380 L1280 600 L-200 820 L1280 1040 L-200 1260 L1280 1480 L-200 1700 L1280 1920 L-200 2080" fill="none" stroke="#C2714F" stroke-width="420" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  <div data-hf-id="hf-8af1" id="caption"><span data-hf-id="hf-dedq" data-layout-allow-overlap="" class="w">Built</span> <span data-hf-id="hf-wdg8" data-layout-allow-overlap="" class="w">for</span> <span data-hf-id="hf-ud8h" data-layout-allow-overlap="" class="w">the</span> <span data-hf-id="hf-l0ym" data-layout-allow-overlap="" class="w">body</span><br data-hf-id="hf-qluq"><span data-hf-id="hf-6cix" data-layout-allow-overlap="" class="w">you</span> <span data-hf-id="hf-ki2o" data-layout-allow-overlap="" class="w">have</span> <span data-hf-id="hf-okr2" data-layout-allow-overlap="" class="w em">now.<i data-hf-id="hf-pg2o" class="hl"></i></span></div>
+
+  <!-- click sounds -->
+  <audio data-hf-id="hf-ycpt" id="sfx1" data-start="0.52" data-duration="0.12" data-volume="0.35" src="assets/sfx/switch.wav"></audio>
+  <audio data-hf-id="hf-6aln" id="sfx2" data-start="1.27" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-swoo" id="sfx3" data-start="1.52" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-40fe" id="sfx4" data-start="3.02" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio data-hf-id="hf-hs0o" id="sfx5" data-start="3.27" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-cukc" id="sfx6" data-start="4.1" data-duration="1.3" data-volume="0.25" src="assets/sfx/counter.wav"></audio>
+  <audio data-hf-id="hf-1zfh" id="sfx7" data-start="5.02" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-lc9o" id="sfx8" data-start="6.02" data-duration="0.16" data-volume="0.35" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-gpy4" id="sfx9" data-start="6.52" data-duration="0.16" data-volume="0.35" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-jo50" id="sfx10" data-start="7.02" data-duration="0.16" data-volume="0.35" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-3ma4" id="sfx11" data-start="7.5" data-duration="0.8" data-volume="0.3" src="assets/sfx/fill.wav"></audio>
+  <audio data-hf-id="hf-61m9" id="sfx12" data-start="8.52" data-duration="0.7" data-volume="0.35" src="assets/sfx/star.wav"></audio>
+  <audio data-hf-id="hf-c9tl" id="sfx13" data-start="9.02" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-jx53" id="sfx14" data-start="9.27" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-j1za" id="sfx15" data-start="9.52" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-aezm" id="sfx16" data-start="10.52" data-duration="0.09" data-volume="0.4" src="assets/sfx/snap.wav"></audio>
+  <audio data-hf-id="hf-66xv" id="sfx17" data-start="10.77" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-l1rx" id="sfx18" data-start="11.02" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-h1v5" id="sfx19" data-start="11.27" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-dehy" id="sfx20" data-start="11.52" data-duration="0.9" data-volume="0.25" src="assets/sfx/success.wav"></audio>
+  <audio data-hf-id="hf-1i54" id="sfx21" data-start="12.52" data-duration="1.3" data-volume="0.25" src="assets/sfx/counter.wav"></audio>
+  <audio data-hf-id="hf-jg4m" id="sfx22" data-start="13.27" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-ar9t" id="sfx23" data-start="14.4" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-18cq" id="sfx24" data-start="15.27" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-esuh" id="sfx25" data-start="15.52" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-0jqg" id="sfx26" data-start="16.52" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-nnvs" id="sfx27" data-start="16.77" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-vd3u" id="sfx28" data-start="17.02" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-f2oq" id="sfx29" data-start="17.27" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-ezes" id="sfx30" data-start="17.52" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-881z" id="sfx31" data-start="18.52" data-duration="0.09" data-volume="0.4" src="assets/sfx/snap.wav"></audio>
+  <audio data-hf-id="hf-m488" id="sfx32" data-start="18.77" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio data-hf-id="hf-56ym" id="sfx33" data-start="19.27" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio data-hf-id="hf-kzlb" id="sfx34" data-start="22.6" data-duration="1.6" data-volume="0.3" src="assets/sfx/chime.wav"></audio>
+  <audio data-hf-id="hf-6ckx" id="sfx35" data-start="24.02" data-duration="0.9" data-volume="0.25" src="assets/sfx/success.wav"></audio>
+</div>
+
+<script>
+(function () {
+  // Hand-drawn arrows in the gaps between panels, along the snake path.
+  const NS = 'http://www.w3.org/2000/svg';
+  const arrows = document.getElementById('arrows');
+  const CW = 1320, CH = 2160;
+  function arrow(id, x1, y1, x2, y2) {
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const vertical = x1 === x2;
+    const wob = vertical ? `C ${x1 + 40} ${my - 30} ${x1 - 40} ${my + 30} ${x2} ${y2}` : `C ${mx - 30} ${y1 - 40} ${mx + 30} ${y1 + 40} ${x2} ${y2}`;
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const hx = (a) => x2 - 60 * Math.cos(ang + a), hy = (a) => y2 - 60 * Math.sin(ang + a);
+    const g = document.createElementNS(NS, 'g');
+    g.id = id;
+    g.innerHTML = `<path d="M ${x1} ${y1} ${wob}" fill="none" stroke="#C2714F" stroke-width="20" stroke-linecap="round"/>` +
+      `<path d="M ${hx(0.6)} ${hy(0.6)} L ${x2} ${y2} L ${hx(-0.6)} ${hy(-0.6)}" fill="none" stroke="#C2714F" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>`;
+    arrows.appendChild(g);
+  }
+  const yMid = (r) => r * CH + 960, xMid = (c) => c * CW + 540;
+  arrow('a1', 1080 + 40, yMid(0), CW - 40, yMid(0));
+  arrow('a2', CW + 1080 + 40, yMid(0), 2 * CW - 40, yMid(0));
+  arrow('a3', 2 * CW + 1080 + 40, yMid(0), 3 * CW - 40, yMid(0));
+  arrow('a5', 3 * CW - 40, yMid(1), 2 * CW + 1080 + 40, yMid(1));
+  arrow('a6', 2 * CW - 40, yMid(1), CW + 1080 + 40, yMid(1));
+  arrow('a7', CW - 40, yMid(1), 1080 + 40, yMid(1));
+  arrow('a8', xMid(0), CH + 1920 + 30, xMid(0), 2 * CH - 30);
+  arrow('a9', 1080 + 40, yMid(2), CW - 40, yMid(2));
+  arrow('a10', CW + 1080 + 40, yMid(2), 2 * CW - 40, yMid(2));
+
+  const F = Film.init({ duration: 26.5 });
+  const { tl, draw, reveal, words, pop, count, whip, jump } = F;
+
+  // Initial states live outside the timeline.
+  gsap.set('.emo svg, .ico, #cta, .chip[id], #recipe, #gapcard, #b1, #b2, #dots, .card', { opacity: 0 });
+  gsap.set('.hl', { scaleX: 0 });
+  gsap.set('.sw2', { opacity: 0, rotationX: -90 });
+  gsap.set('#cover, #flash', { opacity: 0 });
+  gsap.set('#scan', { opacity: 0 });
+  gsap.set('.dot', { scale: 0 });
+  gsap.set('.cbar', { scaleY: 0, transformOrigin: '50% 100%' });
+  gsap.set('#caption .w, #caption .em', { opacity: 0 });
+  gsap.set('#loop', { opacity: 0 });
+
+  const hl = (sel, at) => tl.to(`${sel} .hl`, { scaleX: 1, duration: 0.3, ease: 'power2.out' }, at);
+  const emo = (sel, at) => pop(sel, at, { rotation: -25, scale: 0.2 });
+  const dotPop = (sel, at) => tl.fromTo(sel, { scale: 0 }, { scale: 1, duration: 0.35, ease: 'back.out(3)' }, at);
+  const icon = (sel, at) => pop(sel, at, { rotation: -20 });
+  const arrowIn = (id, at) => draw(`#${id}`, at, 0.28);
+
+  // 01 Same meals / walks / Different body
+  reveal('d01', 0.05, 0.6);
+  words('#p1 .l1', 0.0, 0.08);
+  icon('#i-fork1', 0.1);
+  hl('#p1 .sw1', 0.3);
+  tl.to('#p1 .sw1', { rotationX: 90, opacity: 0, duration: 0.18, ease: 'power2.in' }, 0.5);
+  tl.to('#i-fork1', { opacity: 0, scale: 0.5, duration: 0.15 }, 0.5);
+  tl.to('#p1 .sw2', { rotationX: 0, opacity: 1, duration: 0.24, ease: 'back.out(2)' }, 0.56);
+  icon('#i-shoe1', 0.56);
+  hl('#p1 .sw2', 0.75);
+  words('#p1 .l2', 1.02, 0.1);
+  dotPop('#dot1', 1.27);
+  emo('#em1', 1.52);
+  arrowIn('a1', 1.6);
+  whip(1, 0, 1.7);
+
+  // 02 Built for 25
+  words('#p2 .h', 2.02, 0.05);
+  reveal('d02', 2.1, 0.5);
+  hl('#p2 .h', 2.6);
+  draw('#strike', 3.02, 0.3);
+  emo('#em2', 3.27);
+  arrowIn('a2', 3.6);
+  whip(2, 0, 3.7);
+
+  // 03 62g
+  draw('#ring', 4.02, 0.6);
+  count(document.getElementById('n62'), 62, 4.1, 0.9);
+  words('#p3 .sub', 4.52, 0.05);
+  reveal('d03', 4.6, 0.45);
+  emo('#em3', 5.02);
+  arrowIn('a3', 5.6);
+  whip(3, 0, 5.7);
+
+  // 04 Comic strip: three frames slam on the beats
+  [['#c1', 'd04a', '#em4a', -8], ['#c2', 'd04b', '#em4b', 7], ['#c3', 'd04c', '#em4c', -6]].forEach(([c, d, e, r], i) => {
+    const at = 6.02 + i * 0.5;
+    tl.fromTo(c, { opacity: 0, scale: 0.2, rotation: r }, { opacity: 1, scale: 1, rotation: r / 5, duration: 0.28, ease: 'back.out(2)' }, at);
+    tl.to(c, { x: 10, duration: 0.05, yoyo: true, repeat: 3, ease: 'none' }, at + 0.28);
+    reveal(d, at + 0.04, 0.3);
+    emo(e, at + 0.22);
+  });
+  icon('#heat', 6.2);
+  tl.to('#heat', { y: -12, duration: 0.25, yoyo: true, repeat: 5, ease: 'sine.inOut' }, 6.5);
+  icon('#fog', 7.2);
+  tl.to('#fog', { x: 14, duration: 0.3, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 7.35);
+
+  // Marker scribble covers the frame, camera jumps under it
+  tl.set('#cover', { opacity: 1 }, 7.48);
+  draw('#coverPath', 7.5, 0.45, 'power1.inOut');
+  jump(3, 1, 7.97);
+
+  // 05 DROP: scribble collapses into the dot, keel writes in
+  tl.to('#cover', { scale: 0.02, opacity: 0, transformOrigin: '50% 47%', duration: 0.32, ease: 'power3.in' }, 8.02);
+  words('#p5 .wm', 8.2, 0.06);
+  dotPop('#dot5', 8.52);
+  words('#p5 .sub', 9.02, 0.06);
+  ['#sp1', '#sp2', '#sp3'].forEach((s, i) => { icon(s, 9.02 + i * 0.25); tl.to(s, { rotation: 90, duration: 1.2, ease: 'none' }, 9.1 + i * 0.25); });
+  arrowIn('a5', 9.6);
+  whip(2, 1, 9.7);
+
+  // 06 Snap your plate
+  words('#p6 .h', 10.02, 0.08);
+  reveal('d06', 10.05, 0.5);
+  hl('#p6 .h', 10.4);
+  icon('#cam6', 10.27);
+  draw('#vf', 10.3, 0.3);
+  tl.to('#cam6', { scale: 0.82, duration: 0.08, yoyo: true, repeat: 1 }, 10.52);
+  tl.fromTo('#flash', { opacity: 0.7 }, { opacity: 0, duration: 0.3, immediateRender: false }, 10.52);
+  tl.set('#scan', { opacity: 1 }, 10.6);
+  tl.fromTo('#scan', { y: 0 }, { y: 860, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, 10.6);
+  tl.to('#scan', { opacity: 0, duration: 0.1 }, 11.2);
+  ['#ch1', '#ch2', '#ch3'].forEach((c, i) => pop(c, 10.77 + i * 0.25, { y: 30 }));
+  pop('#ch4', 11.52, { y: 30 });
+  emo('#em6', 11.52);
+  arrowIn('a6', 11.6);
+  whip(1, 1, 11.7);
+
+  // 07 Close the gap
+  words('#p7 .h', 12.02, 0.08);
+  hl('#p7 .h', 12.4);
+  pop('#gapcard', 12.1, { y: 60, rotation: -3, scale: 0.8 });
+  const n104 = document.getElementById('n104');
+  const g = { v: 62 };
+  tl.to(g, { v: 104, duration: 0.9, ease: 'expo.out', onUpdate: () => (n104.textContent = Math.round(g.v)) }, 12.52);
+  tl.fromTo('#bar', { scaleX: 62 / 104 }, { scaleX: 1, duration: 0.9, ease: 'expo.out' }, 12.52);
+  icon('#up7', 12.52);
+  tl.to('#up7', { y: -20, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 12.8);
+  emo('#em7', 13.27);
+  arrowIn('a7', 13.6);
+  whip(0, 1, 13.7);
+
+  // 08 Coach
+  words('#p8 .h', 14.02, 0.06);
+  hl('#p8 .h', 14.45);
+  reveal('d08', 14.1, 0.5);
+  pop('#b1', 14.4, { x: -40, rotation: -4 });
+  emo('#em8a', 14.52);
+  pop('#dots', 14.77, { scale: 0.5 });
+  tl.to('#dots .td', { y: -10, duration: 0.12, yoyo: true, repeat: 1, stagger: 0.08 }, 14.85);
+  tl.to('#dots', { opacity: 0, duration: 0.1 }, 15.22);
+  pop('#b2', 15.27, { x: 40, rotation: 3 });
+  icon('#sp8', 15.35);
+  tl.to('#sp8', { rotation: 90, duration: 0.6, ease: 'none' }, 15.4);
+  emo('#em8b', 15.52);
+  arrowIn('a8', 15.6);
+  whip(0, 2, 15.72);
+
+  // 09 Lift
+  words('#p9 .h', 16.03, 0.06);
+  hl('#p9 .h', 16.4);
+  reveal('d09', 16.1, 0.5);
+  icon('#db9', 16.27);
+  tl.to('#db9', { rotation: 2, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 16.5);
+  tl.to('.cbar', { scaleY: 1, duration: 0.3, ease: 'back.out(2)', stagger: 0.25 }, 16.52);
+  emo('#em9', 17.27);
+  icon('#st1', 17.4);
+  icon('#st2', 17.52);
+  arrowIn('a9', 17.6);
+  whip(1, 2, 17.7);
+
+  // 10 Fridge to dinner
+  words('#p10 .h', 18.02, 0.06);
+  hl('#p10 .h', 18.4);
+  reveal('d10', 18.1, 0.5);
+  icon('#cam10', 18.27);
+  tl.to('#cam10', { scale: 0.82, duration: 0.08, yoyo: true, repeat: 1 }, 18.52);
+  pop('#recipe', 18.77, { y: 80, rotation: 4, scale: 0.7 });
+  emo('#em10', 19.27);
+  arrowIn('a10', 19.5);
+
+  // 11 Zoom out to the whole storyboard, loop arrow, caption below
+  tl.to('#world', { x: 61, y: 260, scale: 0.19, duration: 0.8, ease: 'expo.inOut' }, 19.72);
+  tl.set('#loop', { opacity: 1 }, 20.2);
+  draw('#loopPath', 20.25, 0.9, 'power2.inOut');
+  draw('#loopHead', 21.1, 0.2);
+  tl.fromTo('#caption .w, #caption .em', { y: 60, opacity: 0, scaleY: 1.5 }, { y: 0, opacity: 1, scaleY: 1, duration: 0.35, ease: 'back.out(2)', stagger: 0.08 }, 20.52);
+  hl('#caption', 21.2);
+
+  // Dive into the logo panel
+  tl.to('#loop, #caption', { opacity: 0, duration: 0.2 }, 21.8);
+  tl.to('#world', { x: -2 * CW, y: -2 * CH, scale: 1, duration: 0.7, ease: 'expo.inOut' }, 21.85);
+
+  // 12 Strong for life
+  dotPop('#dot12', 22.6);
+  words('#p12 .wm2', 22.75, 0.06);
+  words('#p12 .tag', 23.27, 0.1);
+  hl('#p12 .tag', 23.65);
+  icon('#heart12', 23.77);
+  tl.to('#heart12', { scale: 1.15, duration: 0.2, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 24.1);
+  pop('#cta', 24.02, { y: 40, scale: 0.6 });
+  tl.set({}, {}, 26.5);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines['main'] = tl;
+  tl.seek(0);
+})();
+</script>
+</body>
+</html>

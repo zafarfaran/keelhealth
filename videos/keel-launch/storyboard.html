@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keel launch storyboard v2</title>
+<style>
+  @font-face { font-family: Bricolage; src: url(assets/fonts/BricolageGrotesque-var.woff2) format('woff2'); font-weight: 200 800; }
+  @font-face { font-family: Gabarito; src: url(assets/fonts/Gabarito-var.woff2) format('woff2'); font-weight: 400 900; }
+  @font-face { font-family: Fredoka; src: url(assets/fonts/Fredoka-var.woff2) format('woff2'); font-weight: 300 700; }
+  @font-face { font-family: Baloo; src: url(assets/fonts/Baloo2-var.woff2) format('woff2'); font-weight: 400 800; }
+  @font-face { font-family: Plex; src: url(assets/fonts/IBMPlexMono-500.woff2) format('woff2'); font-weight: 500; }
+  :root {
+    --display: Baloo, system-ui, sans-serif;
+    --ink: #3B322C; --ivory: #FBF8F4; --almond: #EDE3D6; --text2: #5D534B; --label: #7D7167;
+    --terra: #C2714F; --terra-deep: #A85A3C; --clay: #C08E82; --apricot: #F0C9A8; --honey: #E8C05F; --plum: #A9647A; --olive: #9AA88F;
+    --tint-olive: #F4F6F1; --tint-sky: #D5E2EE; --border: #E6DCCE;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--almond); color: var(--ink); font-family: var(--display); padding: 40px 16px 80px; }
+  header { max-width: 1400px; margin: 0 auto 28px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: baseline; }
+  header h1 { font-weight: 800; font-size: 40px; letter-spacing: -0.04em; }
+  header p { color: var(--text2); font-size: 17px; flex: 1 1 360px; }
+  .tag { font-family: Plex; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); border: 1px solid var(--border); background: var(--ivory); padding: 6px 10px; border-radius: 999px; }
+  .act { max-width: 1400px; margin: 36px auto 14px; font-family: Plex; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); display: flex; gap: 12px; align-items: center; }
+  .act::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 28px 22px; }
+
+  /* font picker */
+  .fonts { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .font { background: var(--ivory); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px 20px; position: relative; }
+  .font.pick { border: 2px solid var(--ink); }
+  .font .nm { font-family: Plex; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); display: flex; justify-content: space-between; }
+  .font .sample { font-weight: 800; font-size: 40px; letter-spacing: -0.035em; line-height: 1.02; margin-top: 10px; }
+  .font .small { padding-right: 64px; font-size: 16px; color: var(--text2); margin-top: 8px; font-weight: 500; }
+  .font svg { position: absolute; right: 14px; bottom: 14px; width: 54px; height: 54px; }
+
+  figure { display: flex; flex-direction: column; gap: 10px; }
+  .cell {
+    aspect-ratio: 9 / 16; container-type: inline-size; position: relative; overflow: hidden; border-radius: 6px;
+    background-color: var(--ivory);
+    background-image: radial-gradient(circle, rgba(168,150,138,.28) 1.1px, transparent 1.4px);
+    background-size: 4cqw 4cqw; box-shadow: 0 0 0 1px var(--border);
+  }
+  .cell::before { content: ''; position: absolute; inset: 3cqw; border: .35cqw dashed rgba(168,150,138,.45); border-radius: 2cqw; pointer-events: none; }
+  .pn { position: absolute; top: 5cqw; left: 6cqw; font-family: Plex; font-size: 3cqw; color: var(--label); letter-spacing: .1em; }
+  .art { position: absolute; mix-blend-mode: multiply; object-fit: contain; }
+  .h { position: absolute; left: 8cqw; right: 8cqw; font-weight: 800; letter-spacing: -0.04em; line-height: 1; font-size: 11cqw; }
+  /* one family: emphasis = terracotta + apricot highlighter swipe */
+  .em { color: var(--terra-deep); background: linear-gradient(transparent 58%, rgba(240,201,168,.85) 58%, rgba(240,201,168,.85) 90%, transparent 90%); padding: 0 .06em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .dot { display: inline-block; width: .26em; height: .26em; border-radius: 50%; background: var(--clay); margin-left: .06em; }
+  .sub { position: absolute; left: 8cqw; right: 8cqw; font-size: 4.6cqw; color: var(--text2); line-height: 1.25; font-weight: 500; }
+  .mono { font-family: Plex; font-size: 3.2cqw; letter-spacing: .06em; text-transform: uppercase; color: var(--label); }
+  .inked { position: absolute; background: #fff; border: .7cqw solid var(--ink); border-radius: 3cqw; box-shadow: 1.4cqw 1.4cqw 0 var(--clay); }
+  .chip { display: inline-flex; align-items: center; gap: 1.2cqw; font-size: 3.6cqw; font-weight: 700; padding: 1.2cqw 2.8cqw; border-radius: 999px; border: .5cqw solid var(--ink); background: #fff; margin: 0 1cqw 1.4cqw 0; }
+  .chip svg { width: 4cqw; height: 4cqw; }
+  svg.ov { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .emo, .ico { position: absolute; overflow: visible; }
+  .emo { filter: drop-shadow(.7cqw .9cqw 0 rgba(59,50,44,.22)); }
+  figcaption { font-size: 14px; line-height: 1.45; color: var(--text2); font-family: system-ui, sans-serif; }
+  figcaption .row { display: flex; justify-content: space-between; font-family: Plex; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin-bottom: 4px; }
+  figcaption b { color: var(--ink); }
+  .seam { display: inline-block; margin-top: 6px; font-family: Plex; font-size: 11px; color: var(--terra-deep); border: 1px solid var(--border); background: var(--ivory); padding: 3px 8px; border-radius: 999px; }
+  .new { display: inline-block; font-family: Plex; font-size: 10px; letter-spacing: .08em; color: #fff; background: var(--terra-deep); padding: 2px 6px; border-radius: 4px; margin-right: 6px; vertical-align: 1px; }
+  .emoset { position: absolute; inset: 14cqw 6cqw auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4cqw 2cqw; text-align: center; font-family: Plex; font-size: 2.6cqw; color: var(--label); text-transform: uppercase; letter-spacing: .05em; }
+  .emoset svg { width: 22cqw; height: 22cqw; display: block; margin: 0 auto 1cqw; filter: drop-shadow(.6cqw .8cqw 0 rgba(59,50,44,.2)); }
+</style>
+</head>
+<body>
+
+<!-- Keel custom emoji + line icons. Faces: honey fill, ink outline, rose-clay cheeks. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="face"><circle cx="50" cy="52" r="40" fill="#E8C05F" stroke="#3B322C" stroke-width="5"/></g>
+    <path id="heart" d="M0 6 C0 -2 10 -4 12 3 C14 -4 24 -2 24 6 C24 14 12 20 12 22 C12 20 0 14 0 6Z"/>
+  </defs>
+  <symbol id="e-puzzled" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M28 34 Q36 26 45 32"/><path d="M57 38 L71 37"/><path d="M38 71 Q44 65 50 71 T63 70"/></g><circle cx="38" cy="47" r="4.5" fill="#3B322C"/><circle cx="63" cy="48" r="4.5" fill="#3B322C"/><text x="80" y="22" font-family="Bricolage, sans-serif" font-weight="800" font-size="30" fill="#C2714F" stroke="#3B322C" stroke-width="1.5">?</text></symbol>
+  <symbol id="e-meh" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M29 47 H47"/><path d="M54 47 H72"/><path d="M38 70 H62"/></g><circle cx="40" cy="42" r="4" fill="#3B322C"/><circle cx="65" cy="42" r="4" fill="#3B322C"/></symbol>
+  <symbol id="e-sleepy" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M29 49 Q37 56 45 49"/><path d="M55 49 Q63 56 71 49"/><circle cx="50" cy="70" r="5"/><path d="M72 10 H84 L72 22 H84" stroke="#A9647A"/><path d="M86 -2 H93 L86 6 H93" stroke="#A9647A" stroke-width="4"/></g></symbol>
+  <symbol id="e-tired" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M29 43 L44 36"/><path d="M71 43 L56 36"/><path d="M35 71 Q42 64 50 71 Q58 78 65 71"/></g><circle cx="38" cy="50" r="4.5" fill="#3B322C"/><circle cx="62" cy="50" r="4.5" fill="#3B322C"/><path d="M84 18 Q92 31 84 36 Q76 31 84 18Z" fill="#D5E2EE" stroke="#3B322C" stroke-width="3.5" stroke-linejoin="round"/></symbol>
+  <symbol id="e-dizzy" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="4.5" stroke-linecap="round"><path d="M38 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5"/><path d="M63 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5"/><path d="M37 72 Q43 67 50 72 Q57 77 63 72"/></g></symbol>
+  <symbol id="e-wow" viewBox="0 0 100 100"><use href="#face"/><circle cx="37" cy="45" r="7.5" fill="#fff" stroke="#3B322C" stroke-width="4"/><circle cx="63" cy="45" r="7.5" fill="#fff" stroke="#3B322C" stroke-width="4"/><circle cx="38" cy="46" r="3.4" fill="#3B322C"/><circle cx="64" cy="46" r="3.4" fill="#3B322C"/><ellipse cx="50" cy="71" rx="7" ry="9" fill="#3B322C"/></symbol>
+  <symbol id="e-yum" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M29 51 Q37 41 45 51"/><path d="M55 51 Q63 41 71 51"/><path d="M33 62 Q50 80 67 62"/></g><path d="M52 70 Q57 84 65 68" fill="#C08E82" stroke="#3B322C" stroke-width="4" stroke-linejoin="round"/></symbol>
+  <symbol id="e-happy" viewBox="0 0 100 100"><use href="#face"/><circle cx="28" cy="62" r="6.5" fill="#C08E82" opacity=".8"/><circle cx="72" cy="62" r="6.5" fill="#C08E82" opacity=".8"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M30 50 Q38 41 46 50"/><path d="M54 50 Q62 41 70 50"/><path d="M38 64 Q50 76 62 64"/></g></symbol>
+  <symbol id="e-love" viewBox="0 0 100 100"><use href="#face"/><use href="#heart" x="25" y="36" fill="#C2714F" stroke="#3B322C" stroke-width="3"/><use href="#heart" x="51" y="36" fill="#C2714F" stroke="#3B322C" stroke-width="3"/><path d="M33 63 Q50 86 67 63 Z" fill="#3B322C" stroke="#3B322C" stroke-width="4" stroke-linejoin="round"/></symbol>
+  <symbol id="e-proud" viewBox="0 0 100 100"><use href="#face"/><circle cx="28" cy="62" r="6" fill="#C08E82" opacity=".8"/><circle cx="72" cy="62" r="6" fill="#C08E82" opacity=".8"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M30 49 Q38 41 46 49"/><path d="M34 62 Q50 80 66 62"/></g><circle cx="62" cy="47" r="4.5" fill="#3B322C"/></symbol>
+
+  <!-- icons: ink line, 100 box -->
+  <symbol id="i-fork" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M30 12 V40 Q30 50 38 50 V88"/><path d="M46 12 V40 Q46 50 38 50"/><path d="M38 12 V36"/><path d="M68 88 V12 Q82 22 80 50 H68"/></g></symbol>
+  <symbol id="i-shoe" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 70 V36 Q22 40 34 34 Q46 56 74 56 Q92 58 92 72 V76 H10Z"/><path d="M40 46 L48 40 M48 52 L56 46"/></g></symbol>
+  <symbol id="i-camera" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="7" stroke-linejoin="round"><rect x="10" y="30" width="80" height="54" rx="12"/><path d="M34 30 L40 18 H60 L66 30"/><circle cx="50" cy="57" r="15"/></g><circle cx="76" cy="42" r="4" fill="#C2714F"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 100 100"><path d="M50 6 Q55 45 94 50 Q55 55 50 94 Q45 55 6 50 Q45 45 50 6Z" fill="#E8C05F" stroke="#3B322C" stroke-width="5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 100 100"><path d="M64 12 A40 40 0 1 0 88 66 A32 32 0 0 1 64 12Z" fill="#E3DAEF" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 100 100"><g fill="none" stroke="#A9647A" stroke-width="7" stroke-linecap="round"><path d="M28 88 Q16 70 28 52 Q40 34 28 14"/><path d="M50 88 Q38 70 50 52 Q62 34 50 14"/><path d="M72 88 Q60 70 72 52 Q84 34 72 14"/></g></symbol>
+  <symbol id="i-cloud" viewBox="0 0 100 100"><path d="M24 74 Q8 74 10 60 Q12 46 28 48 Q30 28 50 28 Q68 28 72 44 Q90 42 92 58 Q92 74 76 74Z" fill="#fff" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/><g stroke="#A8968A" stroke-width="5" stroke-linecap="round"><path d="M30 86 H62"/><path d="M42 96 H78"/></g></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M30 50 H70"/><rect x="14" y="30" width="16" height="40" rx="5" fill="#C2714F"/><rect x="70" y="30" width="16" height="40" rx="5" fill="#C2714F"/><path d="M6 42 V58 M94 42 V58"/></g></symbol>
+  <symbol id="i-up" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M50 88 V14"/><path d="M24 40 L50 14 L76 40"/></g></symbol>
+  <symbol id="i-chat" viewBox="0 0 100 100"><path d="M14 20 H86 Q92 20 92 26 V64 Q92 70 86 70 H44 L24 88 V70 H14 Q8 70 8 64 V26 Q8 20 14 20Z" fill="#fff" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/><g fill="#3B322C"><circle cx="32" cy="45" r="5"/><circle cx="50" cy="45" r="5"/><circle cx="68" cy="45" r="5"/></g></symbol>
+  <symbol id="i-heart" viewBox="0 0 100 100"><path d="M50 86 C20 64 8 50 8 34 C8 18 22 10 34 12 C42 13 48 20 50 26 C52 20 58 13 66 12 C78 10 92 18 92 34 C92 50 80 64 50 86Z" fill="#C2714F" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pan" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 50 H70 Q70 76 44 76 H34 Q8 76 8 50Z" fill="#fff"/><path d="M70 54 H94"/><path d="M26 38 Q22 30 28 22 M42 38 Q38 30 44 22 M58 38 Q54 30 60 22" stroke="#A8968A" stroke-width="5"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#9AA88F" stroke="#3B322C" stroke-width="6"/><path d="M30 52 L44 66 L72 36" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 100 100"><path d="M50 8 L61 36 L92 38 L68 58 L76 90 L50 72 L24 90 L32 58 L8 38 L39 36Z" fill="#E8C05F" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header>
+  <h1>Keel launch, sketch film v2</h1>
+  <p>One font family now; emphasis is colour plus a highlighter swipe. Custom Keel emoji carry the feelings, line icons carry the features, and both pop in on the beat.</p>
+  <span class="tag">1080×1920 · ~30s · 12 beats · music, no VO</span>
+</header>
+
+<div class="act">Pick a font (sheet below uses the first)</div>
+<div class="fonts">
+  <div class="font" style="font-family:Bricolage"><div class="nm"><span>Bricolage Grotesque 800</span><span>recommended</span></div><div class="sample">Photo your fridge. <span class="em">Get dinner.</span></div><div class="small">Characterful, warm, still easy to read at a glance.</div><svg><use href="#e-love"/></svg></div>
+  <div class="font" style="font-family:Gabarito"><div class="nm"><span>Gabarito 800</span><span>clean + bold</span></div><div class="sample">Photo your fridge. <span class="em">Get dinner.</span></div><div class="small">Geometric and confident, closest to the current site.</div><svg><use href="#e-love"/></svg></div>
+  <div class="font" style="font-family:Fredoka"><div class="nm"><span>Fredoka 700</span><span>rounded + playful</span></div><div class="sample">Photo your fridge. <span class="em">Get dinner.</span></div><div class="small">Softest and most upbeat; pairs naturally with the emoji.</div><svg><use href="#e-love"/></svg></div>
+  <div class="font pick" style="font-family:Baloo"><div class="nm"><span>Baloo 2 800</span><span>chunky + friendly</span></div><div class="sample">Photo your fridge. <span class="em">Get dinner.</span></div><div class="small">Heavy and bubbly, very social-feed.</div><svg><use href="#e-love"/></svg></div>
+</div>
+
+<div class="act">Act 1 · Build (row 0, camera moves right)</div>
+<div class="grid">
+
+  <figure>
+    <div class="cell" id="frame-01">
+      <span class="pn">01</span>
+      <div class="h" style="top:12cqw">Same <span class="em">walks.</span><br>Different body<span class="dot"></span></div>
+      <svg class="ico" style="right:7cqw;top:12cqw;width:13cqw;height:13cqw;transform:rotate(-8deg)"><use href="#i-shoe"/></svg>
+      <img class="art" src="assets/draw/01-kitchen.png" style="left:6cqw;width:88cqw;height:120cqw;bottom:6cqw" alt="">
+      <svg class="emo" style="left:60cqw;top:56cqw;width:24cqw;height:24cqw;transform:rotate(8deg)"><use href="#e-puzzled"/></svg>
+    </div>
+    <figcaption><div class="row"><span>01 · Same meals</span><span>0.0–2.2</span></div><span class="new">NEW</span><b>Icon swaps with the word:</b> fork for "meals", shoe for "walks". Puzzled emoji pops by her head on "Different body".<br><span class="seam">whip right → a1</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-02">
+      <span class="pn">02</span>
+      <div class="h" style="top:12cqw;font-size:10cqw">Most apps were built for <span class="em">25-year-olds.</span></div>
+      <img class="art" src="assets/draw/02-phone.png" style="left:8cqw;width:84cqw;height:84cqw;top:62cqw" alt="">
+      <svg class="ov" viewBox="0 0 100 178"><path d="M22 92 C40 100 60 88 80 120 M20 120 C40 108 62 132 82 100" fill="none" stroke="#C2714F" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <svg class="emo" style="right:7cqw;top:132cqw;width:24cqw;height:24cqw;transform:rotate(-8deg)"><use href="#e-meh"/></svg>
+    </div>
+    <figcaption><div class="row"><span>02 · Built for 25</span><span>2.4–4.2</span></div><span class="new">NEW</span><b>Eye-roll emoji</b> slaps on after the scribble strike.<br><span class="seam">whip right → a2</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-03">
+      <span class="pn">03</span>
+      <svg class="ov" viewBox="0 0 100 178"><path d="M50 26 C78 25 88 46 86 62 C84 82 66 94 48 93 C27 92 13 78 14 59 C15 40 30 27 54 29" fill="none" stroke="#C08E82" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <div class="h" style="top:44cqw;text-align:center;font-size:30cqw;letter-spacing:-0.06em">62<span style="font-size:.5em">g</span></div>
+      <div class="sub" style="top:108cqw;text-align:center;font-size:6cqw;color:var(--ink);font-weight:700">of protein a day.<br>Most women over 40.*</div>
+      <img class="art" src="assets/draw/03-breakfast.png" style="left:18cqw;width:64cqw;height:52cqw;bottom:8cqw" alt="">
+      <svg class="emo" style="right:8cqw;top:26cqw;width:20cqw;height:20cqw;transform:rotate(10deg)"><use href="#e-wow"/></svg>
+    </div>
+    <figcaption><div class="row"><span>03 · 62g</span><span>4.4–6.2</span></div><span class="new">NEW</span><b>Ring draws, number counts</b>, a wide-eyed emoji lands as the count stops.<br><span class="seam">whip right → a3</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-04">
+      <span class="pn">04</span>
+      <div class="inked" style="left:7cqw;right:7cqw;top:10cqw;height:50cqw;box-shadow:1.4cqw 1.4cqw 0 var(--plum);transform:rotate(-1.5deg)"><img class="art" src="assets/draw/04a-night.png" style="inset:1cqw;width:calc(100% - 2cqw);height:calc(100% - 2cqw)" alt=""><span class="chip" style="position:absolute;left:2cqw;top:2cqw"><svg><use href="#i-moon"/></svg>3am. Wide awake.</span><svg class="ico" style="left:6cqw;bottom:4cqw;width:9cqw;height:9cqw"><use href="#i-heat"/></svg><svg class="emo" style="right:2cqw;bottom:2cqw;width:17cqw;height:17cqw"><use href="#e-sleepy"/></svg></div>
+      <div class="inked" style="left:7cqw;right:7cqw;top:64cqw;height:50cqw;box-shadow:1.4cqw 1.4cqw 0 var(--plum);transform:rotate(1.2deg)"><img class="art" src="assets/draw/04b-stairs.png" style="inset:1cqw;width:calc(100% - 2cqw);height:calc(100% - 2cqw)" alt=""><span class="chip" style="position:absolute;left:2cqw;top:2cqw">Stairs feel steeper.</span><svg class="emo" style="right:2cqw;bottom:2cqw;width:17cqw;height:17cqw"><use href="#e-tired"/></svg></div>
+      <div class="inked" style="left:7cqw;right:7cqw;top:118cqw;height:50cqw;box-shadow:1.4cqw 1.4cqw 0 var(--plum);transform:rotate(-0.8deg)"><img class="art" src="assets/draw/04c-desk.png" style="inset:1cqw;width:calc(100% - 2cqw);height:calc(100% - 2cqw)" alt=""><span class="chip" style="position:absolute;left:2cqw;top:2cqw">4pm fog.</span><svg class="ico" style="left:30cqw;top:1cqw;width:13cqw;height:13cqw"><use href="#i-cloud"/></svg><svg class="emo" style="right:2cqw;bottom:2cqw;width:17cqw;height:17cqw"><use href="#e-dizzy"/></svg></div>
+    </div>
+    <figcaption><div class="row"><span>04 · Comic strip</span><span>6.4–8.0</span></div><span class="new">NEW</span><b>Each frame slams in with its own emoji:</b> sleepy (with moon + heat waves for hot flushes), tired with a sweat drop, dizzy under a fog cloud.<br><span class="seam">marker scribble covers →</span></figcaption>
+  </figure>
+</div>
+
+<div class="act">Act 2 · Drop + product (row 1, camera moves left)</div>
+<div class="grid">
+  <figure>
+    <div class="cell" id="frame-05">
+      <span class="pn">05</span>
+      <svg class="ico" style="left:16cqw;top:52cqw;width:12cqw;height:12cqw"><use href="#i-sparkle"/></svg>
+      <svg class="ico" style="right:14cqw;top:60cqw;width:8cqw;height:8cqw"><use href="#i-sparkle"/></svg>
+      <svg class="ico" style="right:24cqw;top:118cqw;width:10cqw;height:10cqw"><use href="#i-sparkle"/></svg>
+      <div class="h" style="top:70cqw;text-align:center;font-size:26cqw;letter-spacing:-0.06em">keel<span class="dot" style="width:.22em;height:.22em"></span></div>
+      <div class="sub" style="top:106cqw;text-align:center;font-size:6cqw">Strength &amp; nutrition<br>after 40</div>
+    </div>
+    <figcaption><div class="row"><span>05 · Meet keel (drop)</span><span>8.5–10.1</span></div><b>On the drop</b> the scribble collapses into the rose-clay dot, "keel" writes in, <span class="new">NEW</span>three honey sparkles burst.<br><span class="seam">scribble wipes → whip left</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-06">
+      <span class="pn">06</span>
+      <div class="h" style="top:12cqw">Snap your <span class="em">plate.</span></div>
+      <img class="art" src="assets/draw/06-plate.png" style="left:8cqw;width:84cqw;height:84cqw;top:44cqw" alt="">
+      <svg class="ov" viewBox="0 0 100 178"><g fill="none" stroke="#3B322C" stroke-width="1.6" stroke-linecap="round"><path d="M10 52 V44 H18"/><path d="M82 44 H90 V52"/><path d="M90 118 V126 H82"/><path d="M18 126 H10 V118"/></g><path d="M12 84 H88" stroke="#C2714F" stroke-width="1"/></svg>
+      <svg class="ico" style="right:8cqw;top:30cqw;width:13cqw;height:13cqw;transform:rotate(-10deg)"><use href="#i-camera"/></svg>
+      <div style="position:absolute;left:8cqw;right:8cqw;top:140cqw"><span class="chip">Salmon · 28g</span><span class="chip">Rice</span><span class="chip">Greens</span><br><span class="chip" style="background:var(--tint-olive);border-color:var(--olive)"><svg><use href="#i-check"/></svg>Fits your day</span></div>
+      <svg class="emo" style="right:7cqw;top:150cqw;width:19cqw;height:19cqw;transform:rotate(8deg)"><use href="#e-yum"/></svg>
+    </div>
+    <figcaption><div class="row"><span>06 · Snap your plate</span><span>10.2–12.0</span></div><span class="new">NEW</span><b>Camera icon clicks</b> (shutter sound), scan sweeps, chips tick in, yum emoji pops with the olive tick.<br><span class="seam">whip left → a6</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-07">
+      <span class="pn">07</span>
+      <div class="h" style="top:12cqw">See the gap.<br><span class="em">Close it.</span></div>
+      <div class="inked" style="left:8cqw;right:8cqw;top:66cqw;padding:6cqw">
+        <div class="mono">Protein today</div>
+        <div style="font-weight:800;font-size:13cqw;letter-spacing:-0.05em;margin:2cqw 0 4cqw">62g <span style="color:var(--label);font-weight:500">→</span> 104g</div>
+        <div style="height:4cqw;border-radius:99px;background:#EDE3D6;overflow:hidden"><div style="width:100%;height:100%;background:var(--clay)"></div></div>
+        <div class="mono" style="margin-top:3cqw">Your target · 104g</div>
+      </div>
+      <svg class="ico" style="left:12cqw;top:124cqw;width:12cqw;height:12cqw"><use href="#i-up"/></svg>
+      <svg class="emo" style="right:10cqw;top:122cqw;width:24cqw;height:24cqw;transform:rotate(-6deg)"><use href="#e-happy"/></svg>
+    </div>
+    <figcaption><div class="row"><span>07 · Close the gap</span><span>12.0–13.8</span></div><b>Callback to 03:</b> bar fills 62g → 104g. <span class="new">NEW</span>Up-arrow bobs, happy emoji pops when the bar is full.<br><span class="seam">whip left → a7</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-08">
+      <span class="pn">08</span>
+      <div class="h" style="top:12cqw;font-size:9.6cqw">A coach that knows your <span class="em">symptoms.</span></div>
+      <img class="art" src="assets/draw/08-sofa.png" style="left:30cqw;width:66cqw;height:98cqw;bottom:2cqw" alt="">
+      <div class="inked" style="left:7cqw;width:62cqw;top:58cqw;padding:3.5cqw 4cqw;font-size:4.3cqw;font-weight:600;box-shadow:1.4cqw 1.4cqw 0 var(--plum)">Slept badly. Hot flushes again.</div>
+      <svg class="emo" style="left:62cqw;top:52cqw;width:14cqw;height:14cqw"><use href="#e-tired"/></svg>
+      <div class="inked" style="left:16cqw;right:7cqw;top:84cqw;padding:3.5cqw 4cqw 3.5cqw 11cqw;font-size:4.3cqw;font-weight:600;box-shadow:1.4cqw 1.4cqw 0 var(--honey)">Lighter session today. Protein at breakfast.</div>
+      <svg class="ico" style="left:18cqw;top:86cqw;width:8cqw;height:8cqw"><use href="#i-sparkle"/></svg>
+      <svg class="emo" style="left:6cqw;top:120cqw;width:20cqw;height:20cqw;transform:rotate(-8deg)"><use href="#e-happy"/></svg>
+    </div>
+    <figcaption><div class="row"><span>08 · Coach</span><span>13.8–15.6</span></div><span class="new">NEW</span><b>Tired emoji on her message,</b> typing dots, coach reply with sparkle, then the emoji flips to happy.<br><span class="seam">whip down → a8</span></figcaption>
+  </figure>
+</div>
+
+<div class="act">Act 3 · Product + close (row 2, camera moves right)</div>
+<div class="grid">
+  <figure>
+    <div class="cell" id="frame-09">
+      <span class="pn">09</span>
+      <div class="h" style="top:12cqw">Lift a little <span class="em">more</span> each week.</div>
+      <img class="art" src="assets/draw/09-squat.png" style="left:2cqw;width:62cqw;height:96cqw;bottom:6cqw" alt="">
+      <svg class="ov" viewBox="0 0 100 178"><g fill="#C2714F"><rect x="66" y="140" width="5" height="16" rx="1"/><rect x="73" y="136" width="5" height="20" rx="1"/><rect x="80" y="132" width="5" height="24" rx="1"/><rect x="87" y="126" width="5" height="30" rx="1"/></g><path d="M64 157 H95" stroke="#3B322C" stroke-width="1.2"/></svg>
+      <svg class="ico" style="right:8cqw;top:58cqw;width:18cqw;height:18cqw;transform:rotate(-14deg)"><use href="#i-dumbbell"/></svg>
+      <svg class="emo" style="right:10cqw;top:88cqw;width:22cqw;height:22cqw;transform:rotate(8deg)"><use href="#e-proud"/></svg>
+      <svg class="ico" style="right:16cqw;top:116cqw;width:8cqw;height:8cqw"><use href="#i-star"/></svg>
+      <svg class="ico" style="right:5cqw;top:112cqw;width:7cqw;height:7cqw"><use href="#i-star"/></svg>
+    </div>
+    <figcaption><div class="row"><span>09 · Lift</span><span>15.8–17.6</span></div><span class="new">NEW</span><b>Dumbbell rocks,</b> bars grow one per beat, winking proud emoji, little stars stamp on the last bar.<br><span class="seam">whip right → a9</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-10">
+      <span class="pn">10</span>
+      <div class="h" style="top:12cqw;font-size:10.4cqw">Photo your fridge. <span class="em">Get dinner.</span></div>
+      <img class="art" src="assets/draw/10-fridge.png" style="left:4cqw;width:60cqw;height:90cqw;top:52cqw" alt="">
+      <svg class="ico" style="right:10cqw;top:52cqw;width:13cqw;height:13cqw;transform:rotate(8deg)"><use href="#i-camera"/></svg>
+      <div class="inked" style="left:36cqw;right:6cqw;top:110cqw;padding:4cqw">
+        <svg style="width:10cqw;height:10cqw;display:block;margin-bottom:1cqw"><use href="#i-pan"/></svg>
+        <div style="font-weight:800;font-size:5cqw;line-height:1.1">Chicken, spinach &amp; feta</div>
+        <div class="mono" style="margin-top:2cqw">38g protein · 20 min</div>
+      </div>
+      <svg class="emo" style="right:6cqw;top:144cqw;width:22cqw;height:22cqw;transform:rotate(-8deg)"><use href="#e-love"/></svg>
+    </div>
+    <figcaption><div class="row"><span>10 · Fridge to dinner</span><span>17.8–19.6</span></div><span class="new">NEW</span><b>One font now.</b> Camera clicks, recipe card slides out with a steaming pan, heart-eyes emoji pops.<br><span class="seam">pull out to world →</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-11" style="background-size:1.2cqw 1.2cqw">
+      <span class="pn">11</span>
+      <div style="position:absolute;left:10cqw;right:10cqw;top:40cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:1.6cqw">
+        <div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div>
+        <div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div>
+        <div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--border);background:#fff"></div><div style="aspect-ratio:9/16;border:.4cqw solid var(--ink);background:#F9F2EC"></div><div></div>
+      </div>
+      <svg class="ov" viewBox="0 0 100 178"><path d="M8 36 C30 26 80 26 93 38 C99 70 98 110 90 126 C70 134 28 134 10 124 C4 100 4 60 9 40" fill="none" stroke="#C08E82" stroke-width="1.4" stroke-linecap="round"/><path d="M6 44 L9 38 L14 41" fill="none" stroke="#C08E82" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <div class="h" style="top:150cqw;text-align:center;font-size:7.4cqw">Built for the body<br>you have <span class="em">now.</span></div>
+    </div>
+    <figcaption><div class="row"><span>11 · The whole board</span><span>19.8–22.2</span></div><b>Held frame.</b> Camera pulls back to the full storyboard (every emoji visible at once); loop arrow draws round it.<br><span class="seam">dive into panel 12</span></figcaption>
+  </figure>
+
+  <figure>
+    <div class="cell" id="frame-12">
+      <span class="pn">12</span>
+      <div class="h" style="top:64cqw;text-align:center;font-size:26cqw;letter-spacing:-0.06em">keel<span class="dot" style="width:.22em;height:.22em"></span></div>
+      <div class="h" style="top:100cqw;text-align:center;font-size:10cqw">Strong for <span class="em">life.</span></div>
+      <svg class="ico" style="right:10cqw;top:84cqw;width:9cqw;height:9cqw;transform:rotate(12deg)"><use href="#i-heart"/></svg>
+      <div style="position:absolute;left:0;right:0;top:138cqw;text-align:center"><span style="display:inline-block;background:var(--ink);color:var(--ivory);font-weight:700;font-size:5cqw;padding:3.4cqw 7cqw;border-radius:999px">Start your free trial</span></div>
+    </div>
+    <figcaption><div class="row"><span>12 · Strong for life</span><span>22.4–26.4+</span></div><b>The dot pops first</b> with a chime, wordmark writes in, line and CTA settle. Kept calm on purpose: no emoji on the logo.<br><span class="seam">end</span></figcaption>
+  </figure>
+</div>
+
+<div class="act">Emoji, seams + tokens</div>
+<div class="grid">
+  <figure>
+    <div class="cell">
+      <span class="pn">KEEL EMOJI</span>
+      <div class="emoset">
+        <div><svg><use href="#e-puzzled"/></svg>puzzled</div><div><svg><use href="#e-meh"/></svg>eye-roll</div><div><svg><use href="#e-wow"/></svg>wow</div>
+        <div><svg><use href="#e-sleepy"/></svg>3am</div><div><svg><use href="#e-tired"/></svg>tired</div><div><svg><use href="#e-dizzy"/></svg>fog</div>
+        <div><svg><use href="#e-yum"/></svg>yum</div><div><svg><use href="#e-happy"/></svg>happy</div><div><svg><use href="#e-proud"/></svg>proud</div>
+        <div><svg><use href="#e-love"/></svg>love it</div>
+      </div>
+    </div>
+    <figcaption><div class="row"><span>Emoji set</span><span>custom SVG</span></div>Hand-drawn in the palette (honey face, ink outline, rose-clay cheeks). Each one pops with a squash-and-settle and a soft tick.</figcaption>
+  </figure>
+  <figure>
+    <div class="cell">
+      <span class="pn">ICONS</span>
+      <div class="emoset">
+        <div><svg><use href="#i-fork"/></svg>meals</div><div><svg><use href="#i-shoe"/></svg>walks</div><div><svg><use href="#i-camera"/></svg>camera</div>
+        <div><svg><use href="#i-moon"/></svg>night</div><div><svg><use href="#i-heat"/></svg>hot flush</div><div><svg><use href="#i-cloud"/></svg>fog</div>
+        <div><svg><use href="#i-check"/></svg>fits</div><div><svg><use href="#i-up"/></svg>more</div><div><svg><use href="#i-dumbbell"/></svg>lift</div>
+        <div><svg><use href="#i-chat"/></svg>coach</div><div><svg><use href="#i-pan"/></svg>dinner</div><div><svg><use href="#i-sparkle"/></svg>sparkle</div>
+      </div>
+    </div>
+    <figcaption><div class="row"><span>Icon set</span><span>line, drawn on</span></div>Each icon draws on with a pen stroke, then gets one small move of its own (camera clicks, dumbbell rocks, heat waves ripple).</figcaption>
+  </figure>
+  <figure>
+    <div class="cell">
+      <span class="pn">SEAM MAP</span>
+      <div style="position:absolute;inset:16cqw 8cqw;font-size:4.2cqw;line-height:2;font-weight:500">
+        01 → 02 whip right<br>02 → 03 whip right<br>03 → 04 whip right<br>04 → 05 <b style="color:var(--terra)">marker cover · DROP</b><br>05 → 06 wipe off, whip left<br>06 → 07 whip left<br>07 → 08 whip left<br>08 → 09 whip down<br>09 → 10 whip right<br>10 → 11 pull out (held)<br>11 → 12 dive into logo
+      </div>
+    </div>
+    <figcaption><div class="row"><span>Seam map</span><span>snake path</span></div>Every whip is 0.38s expo.inOut, landing on a beat, along a hand-drawn arrow.</figcaption>
+  </figure>
+</div>
+</body>
+</html>

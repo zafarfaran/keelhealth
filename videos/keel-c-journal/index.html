@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>Keel launch: Her Journal</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  @font-face { font-family: Gochi; src: url(assets/fonts/GochiHand.woff2) format('woff2'); }
+  @font-face { font-family: Plex; src: url(assets/fonts/IBMPlexMono-500.woff2) format('woff2'); font-weight: 500; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #D9CBB8; }
+  #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #D9CBB8; font-family: Gochi, cursive; color: #3B322C; }
+
+  /* notebook page: blue rules every 76px, rose margin line, punch holes */
+  .page {
+    position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden;
+    background-color: #FFFDF8;
+    background-image: linear-gradient(transparent 73px, rgba(120,150,190,.38) 73px, rgba(120,150,190,.38) 76px);
+    background-size: 100% 76px; backface-visibility: hidden;
+  }
+  .page::before { content: ''; position: absolute; top: 0; bottom: 0; left: 118px; width: 4px; background: rgba(192,142,130,.75); }
+  .hole { position: absolute; left: 34px; width: 46px; height: 46px; border-radius: 50%; background: #D9CBB8; box-shadow: inset 3px 4px 6px rgba(59,50,44,.25); }
+  .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(59,50,44,0) 0%, rgba(59,50,44,.35) 100%); opacity: 0; pointer-events: none; }
+
+  /* handwriting, revealed left to right like a pen */
+  .ln { display: inline-block; white-space: nowrap; line-height: 1.15; }
+  .abs { position: absolute; }
+  .row { position: absolute; left: 0; right: 0; text-align: center; }
+  .lab { font-size: 56px; color: #A85A3C; }
+  .mk { position: relative; display: inline-block; isolation: isolate; }
+  .hl { position: absolute; left: -.06em; right: -.06em; bottom: .14em; height: .42em; background: rgba(240,201,168,.95); z-index: -1; transform-origin: 0 50%; border-radius: .1em; }
+  .mono { font-family: Plex; font-size: 30px; letter-spacing: .1em; color: #8A6A2A; }
+
+  /* taped-in sketches multiply onto the paper */
+  .taped { position: absolute; mix-blend-mode: multiply; }
+  .taped img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .tape { position: absolute; width: 190px; height: 52px; background: rgba(232,192,95,.6); }
+  .tape.r { background: rgba(192,142,130,.55); }
+  .tape.g { background: rgba(154,168,143,.6); }
+
+  .stk, .ico { position: absolute; }
+  .stk svg, .ico svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .stk svg { filter: drop-shadow(6px 9px 4px rgba(59,50,44,.22)); }
+  svg.ov { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; pointer-events: none; }
+
+  .tag { position: absolute; font-size: 62px; padding: 2px 30px 8px; background: rgba(232,192,95,.55); white-space: nowrap; }
+  .tag.ok { background: rgba(154,168,143,.6); }
+  .sticky { position: absolute; background: #F9E7A6; padding: 36px 44px 44px; box-shadow: 8px 14px 18px rgba(59,50,44,.18); }
+  .card { position: absolute; background: #fff; padding: 34px 38px; box-shadow: 6px 10px 14px rgba(59,50,44,.16);
+    background-image: linear-gradient(#C08E82, #C08E82), linear-gradient(transparent 63px, rgba(120,150,190,.3) 63px, rgba(120,150,190,.3) 65px);
+    background-size: 100% 10px, 100% 65px; background-repeat: no-repeat, repeat; background-position: 0 0, 0 30px; }
+  .box { display: inline-block; width: 58px; height: 58px; border: 5px solid #3B322C; border-radius: 10px; margin-right: 26px; vertical-align: -6px; }
+  .cta { display: inline-block; background: #3B322C; color: #FFFDF8; font-size: 72px; padding: 22px 70px 30px; border-radius: 999px; box-shadow: 8px 12px 0 rgba(59,50,44,.18); }
+  .kdot { display: inline-block; width: .19em; height: .19em; border-radius: 50%; background: #C08E82; margin-left: .03em; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="face"><circle cx="50" cy="52" r="47" fill="#fff"/><circle cx="50" cy="52" r="40" fill="#E8C05F" stroke="#3B322C" stroke-width="5"/></g>
+    <path id="heart" d="M0 6 C0 -2 10 -4 12 3 C14 -4 24 -2 24 6 C24 14 12 20 12 22 C12 20 0 14 0 6Z"/>
+  </defs>
+  <symbol id="e-puzzled" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M28 34 Q36 26 45 32"/><path d="M57 38 L71 37"/><path d="M38 71 Q44 65 50 71 T63 70"/></g><circle cx="38" cy="47" r="4.5" fill="#3B322C"/><circle cx="63" cy="48" r="4.5" fill="#3B322C"/></symbol>
+  <symbol id="e-meh" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M29 47 H47"/><path d="M54 47 H72"/><path d="M38 70 H62"/></g><circle cx="40" cy="42" r="4" fill="#3B322C"/><circle cx="65" cy="42" r="4" fill="#3B322C"/></symbol>
+  <symbol id="e-sleepy" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M29 49 Q37 56 45 49"/><path d="M55 49 Q63 56 71 49"/><circle cx="50" cy="70" r="5"/></g></symbol>
+  <symbol id="e-tired" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M29 43 L44 36"/><path d="M71 43 L56 36"/><path d="M35 71 Q42 64 50 71 Q58 78 65 71"/></g><circle cx="38" cy="50" r="4.5" fill="#3B322C"/><circle cx="62" cy="50" r="4.5" fill="#3B322C"/><path d="M84 18 Q92 31 84 36 Q76 31 84 18Z" fill="#D5E2EE" stroke="#3B322C" stroke-width="3.5" stroke-linejoin="round"/></symbol>
+  <symbol id="e-dizzy" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="4.5" stroke-linecap="round"><path d="M38 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5"/><path d="M63 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5"/><path d="M37 72 Q43 67 50 72 Q57 77 63 72"/></g></symbol>
+  <symbol id="e-wow" viewBox="0 0 100 100"><use href="#face"/><circle cx="37" cy="45" r="7.5" fill="#fff" stroke="#3B322C" stroke-width="4"/><circle cx="63" cy="45" r="7.5" fill="#fff" stroke="#3B322C" stroke-width="4"/><circle cx="38" cy="46" r="3.4" fill="#3B322C"/><circle cx="64" cy="46" r="3.4" fill="#3B322C"/><ellipse cx="50" cy="71" rx="7" ry="9" fill="#3B322C"/></symbol>
+  <symbol id="e-yum" viewBox="0 0 100 100"><use href="#face"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M29 51 Q37 41 45 51"/><path d="M55 51 Q63 41 71 51"/><path d="M33 62 Q50 80 67 62"/></g><path d="M52 70 Q57 84 65 68" fill="#C08E82" stroke="#3B322C" stroke-width="4" stroke-linejoin="round"/></symbol>
+  <symbol id="e-happy" viewBox="0 0 100 100"><use href="#face"/><circle cx="28" cy="62" r="6.5" fill="#C08E82" opacity=".8"/><circle cx="72" cy="62" r="6.5" fill="#C08E82" opacity=".8"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M30 50 Q38 41 46 50"/><path d="M54 50 Q62 41 70 50"/><path d="M38 64 Q50 76 62 64"/></g></symbol>
+  <symbol id="e-love" viewBox="0 0 100 100"><use href="#face"/><use href="#heart" x="25" y="36" fill="#C2714F" stroke="#3B322C" stroke-width="3"/><use href="#heart" x="51" y="36" fill="#C2714F" stroke="#3B322C" stroke-width="3"/><path d="M33 63 Q50 86 67 63 Z" fill="#3B322C" stroke="#3B322C" stroke-width="4" stroke-linejoin="round"/></symbol>
+  <symbol id="e-proud" viewBox="0 0 100 100"><use href="#face"/><circle cx="28" cy="62" r="6" fill="#C08E82" opacity=".8"/><circle cx="72" cy="62" r="6" fill="#C08E82" opacity=".8"/><g fill="none" stroke="#3B322C" stroke-width="5" stroke-linecap="round"><path d="M30 49 Q38 41 46 49"/><path d="M34 62 Q50 80 66 62"/></g><circle cx="62" cy="47" r="4.5" fill="#3B322C"/></symbol>
+  <symbol id="i-fork" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 12 V40 Q30 50 38 50 V88"/><path d="M46 12 V40 Q46 50 38 50"/><path d="M38 12 V36"/><path d="M68 88 V12 Q82 22 80 50 H68"/></g></symbol>
+  <symbol id="i-shoe" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 70 V36 Q22 40 34 34 Q46 56 74 56 Q92 58 92 72 V76 H10Z"/><path d="M40 46 L48 40 M48 52 L56 46"/></g></symbol>
+  <symbol id="i-camera" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"><rect x="10" y="30" width="80" height="54" rx="12" fill="#fff"/><path d="M34 30 L40 18 H60 L66 30"/><circle cx="50" cy="57" r="15"/></g><circle cx="76" cy="42" r="4" fill="#C2714F"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 100 100"><path d="M50 6 Q55 45 94 50 Q55 55 50 94 Q45 55 6 50 Q45 45 50 6Z" fill="#E8C05F" stroke="#3B322C" stroke-width="5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 100 100"><path d="M64 12 A40 40 0 1 0 88 66 A32 32 0 0 1 64 12Z" fill="#E3DAEF" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 100 100"><g fill="none" stroke="#A9647A" stroke-width="7" stroke-linecap="round"><path d="M28 88 Q16 70 28 52 Q40 34 28 14"/><path d="M50 88 Q38 70 50 52 Q62 34 50 14"/><path d="M72 88 Q60 70 72 52 Q84 34 72 14"/></g></symbol>
+  <symbol id="i-cloud" viewBox="0 0 100 100"><path d="M24 74 Q8 74 10 60 Q12 46 28 48 Q30 28 50 28 Q68 28 72 44 Q90 42 92 58 Q92 74 76 74Z" fill="#fff" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/><g stroke="#A8968A" stroke-width="5" stroke-linecap="round"><path d="M30 86 H62"/><path d="M42 96 H78"/></g></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M30 50 H70"/><rect x="14" y="30" width="16" height="40" rx="5" fill="#C2714F"/><rect x="70" y="30" width="16" height="40" rx="5" fill="#C2714F"/><path d="M6 42 V58 M94 42 V58"/></g></symbol>
+  <symbol id="i-up" viewBox="0 0 100 100"><g fill="none" stroke="#C2714F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M50 88 Q46 50 50 14"/><path d="M24 40 L50 14 L76 40"/></g></symbol>
+  <symbol id="i-heart" viewBox="0 0 100 100"><path d="M50 86 C20 64 8 50 8 34 C8 18 22 10 34 12 C42 13 48 20 50 26 C52 20 58 13 66 12 C78 10 92 18 92 34 C92 50 80 64 50 86Z" fill="#C2714F" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pan" viewBox="0 0 100 100"><g fill="none" stroke="#3B322C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 50 H70 Q70 76 44 76 H34 Q8 76 8 50Z" fill="#fff"/><path d="M70 54 H94"/><path d="M26 38 Q22 30 28 22 M42 38 Q38 30 44 22 M58 38 Q54 30 60 22" stroke="#A8968A" stroke-width="5"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#9AA88F" stroke="#3B322C" stroke-width="6"/><path d="M30 52 L44 66 L72 36" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 100 100"><path d="M50 8 L61 36 L92 38 L68 58 L76 90 L50 72 L24 90 L32 58 L8 38 L39 36Z" fill="#E8C05F" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div id="root" data-composition-id="main" data-start="0" data-duration="27.0" data-width="1080" data-height="1920">
+  <audio id="bgm" src="assets/bgm/track.mp3" data-start="0" data-duration="27.0" data-track-index="9" data-volume="0.85" data-fade-out="1.0"></audio>
+
+  <!-- 01 Same meals / walks / Different body -->
+  <section class="page" id="p1" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">Monday</span>
+    <span class="ln abs" id="p1a" style="left:150px;top:164px;font-size:118px">Same meals.</span>
+    <span class="ln abs" id="p1b" style="left:150px;top:316px;font-size:118px">Same walks.</span>
+    <span class="ln abs" id="p1c" style="left:150px;top:468px;font-size:118px"><span class="mk">Different body.<i class="hl"></i></span></span>
+    <div class="ico" id="p1fork" style="left:770px;top:180px;width:110px;height:110px"><svg><use href="#i-fork"/></svg></div>
+    <div class="ico" id="p1shoe" style="left:780px;top:332px;width:120px;height:120px"><svg><use href="#i-shoe"/></svg></div>
+    <div class="taped" id="p1art" style="left:140px;top:640px;width:680px;height:1020px"><img src="assets/draw/01-kitchen.png" alt=""><span class="tape" style="left:40px;top:40px;transform:rotate(-10deg)"></span><span class="tape r" style="right:20px;bottom:30px;transform:rotate(8deg)"></span></div>
+    <div class="stk" id="p1st" style="left:740px;top:700px;width:230px;height:230px"><svg><use href="#e-puzzled"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 02 Built for 25 -->
+  <section class="page" id="p2" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">note to self</span>
+    <span class="ln abs" id="p2a" style="left:150px;top:164px;font-size:112px">Most apps were</span>
+    <span class="ln abs" id="p2b" style="left:150px;top:316px;font-size:112px">built for</span>
+    <span class="ln abs" id="p2c" style="left:150px;top:468px;font-size:112px"><span class="mk">25-year-olds.<i class="hl"></i></span></span>
+    <div class="taped" id="p2art" style="left:190px;top:660px;width:700px;height:700px"><img src="assets/draw/02-phone.png" alt=""><span class="tape g" style="left:250px;top:-10px;transform:rotate(3deg)"></span></div>
+    <svg class="ov" viewBox="0 0 1080 1920"><g id="p2x" fill="none" stroke="#C2714F" stroke-width="22" stroke-linecap="round"><path d="M260 880 C450 970 660 840 860 1180"/><path d="M240 1180 C450 1050 680 1310 880 970"/></g></svg>
+    <div class="stk" id="p2st" style="left:770px;top:1380px;width:230px;height:230px"><svg><use href="#e-meh"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 03 62g -->
+  <section class="page" id="p3" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">fact</span>
+    <svg class="ov" viewBox="0 0 1080 1920"><path id="p3ring" d="M540 300 C820 290 930 460 905 630 C880 810 710 900 520 890 C310 880 175 750 185 575 C195 410 330 300 590 318" fill="none" stroke="#C08E82" stroke-width="18" stroke-linecap="round"/></svg>
+    <div class="row" style="top:400px"><span class="ln" id="p3n" style="font-size:340px"><span id="n62">0</span>g</span></div>
+    <span class="ln abs" id="p3a" style="left:150px;top:924px;font-size:92px">of protein a day.</span>
+    <span class="ln abs" id="p3b" style="left:150px;top:1076px;font-size:92px">Most women <span class="mk">over 40.<i class="hl"></i></span>*</span>
+    <div class="taped" id="p3art" style="left:250px;top:1260px;width:580px;height:580px"><img src="assets/draw/03-breakfast.png" alt=""><span class="tape" style="left:200px;top:30px;transform:rotate(-4deg)"></span></div>
+    <div class="stk" id="p3st" style="left:800px;top:280px;width:200px;height:200px"><svg><use href="#e-wow"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 04 three symptom entries -->
+  <section class="page" id="p4" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">this week</span>
+    <div class="taped" id="p4r1" style="left:150px;top:170px;width:420px;height:420px"><img src="assets/draw/04a-night.png" alt=""><span class="tape" style="left:-20px;top:20px;transform:rotate(-30deg);width:130px"></span></div>
+    <span class="ln abs" id="p4a1" style="left:610px;top:240px;font-size:74px">3am.</span>
+    <span class="ln abs" id="p4b1" style="left:610px;top:352px;font-size:74px"><span class="mk">Wide awake.<i class="hl"></i></span></span>
+    <div class="ico" id="p4moon" style="left:620px;top:500px;width:84px;height:84px"><svg><use href="#i-moon"/></svg></div>
+    <div class="ico" id="p4heat" style="left:722px;top:496px;width:84px;height:84px"><svg><use href="#i-heat"/></svg></div>
+    <div class="stk" id="p4s1" style="left:870px;top:470px;width:160px;height:160px"><svg><use href="#e-sleepy"/></svg></div>
+
+    <div class="taped" id="p4r2" style="left:150px;top:720px;width:420px;height:420px"><img src="assets/draw/04b-stairs.png" alt=""><span class="tape r" style="right:-20px;top:20px;transform:rotate(28deg);width:130px"></span></div>
+    <span class="ln abs" id="p4a2" style="left:610px;top:790px;font-size:74px">Stairs feel</span>
+    <span class="ln abs" id="p4b2" style="left:610px;top:902px;font-size:74px"><span class="mk">steeper.<i class="hl"></i></span></span>
+    <div class="stk" id="p4s2" style="left:870px;top:1020px;width:160px;height:160px"><svg><use href="#e-tired"/></svg></div>
+
+    <div class="taped" id="p4r3" style="left:150px;top:1270px;width:420px;height:420px"><img src="assets/draw/04c-desk.png" alt=""><span class="tape g" style="left:-20px;bottom:30px;transform:rotate(24deg);width:130px"></span></div>
+    <span class="ln abs" id="p4a3" style="left:610px;top:1360px;font-size:74px"><span class="mk">4pm fog.<i class="hl"></i></span></span>
+    <div class="ico" id="p4fog" style="left:640px;top:1500px;width:130px;height:130px"><svg><use href="#i-cloud"/></svg></div>
+    <div class="stk" id="p4s3" style="left:870px;top:1560px;width:160px;height:160px"><svg><use href="#e-dizzy"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- quick flip-through before the drop -->
+  <section class="page flip" id="pf1" data-layout-allow-overflow><svg class="ov" viewBox="0 0 1080 1920"><path d="M180 420 C300 380 420 460 560 400" fill="none" stroke="#A8968A" stroke-width="8" stroke-linecap="round"/></svg><div class="shade"></div></section>
+  <section class="page flip" id="pf2" data-layout-allow-overflow><div class="ico" style="left:760px;top:1300px;width:120px;height:120px"><svg><use href="#i-star"/></svg></div><div class="shade"></div></section>
+  <section class="page flip" id="pf3" data-layout-allow-overflow><svg class="ov" viewBox="0 0 1080 1920"><path d="M200 1500 l40 -40 l40 40 l40 -40 l40 40" fill="none" stroke="#C08E82" stroke-width="8" stroke-linecap="round"/></svg><div class="shade"></div></section>
+
+  <!-- 05 Meet keel -->
+  <section class="page" id="p5" data-layout-allow-overflow>
+    <div class="row" style="top:600px"><span class="ln" id="p5k" style="font-size:300px">keel<span class="kdot" id="p5dot"></span></span></div>
+    <div class="row" style="top:1000px"><span class="ln" id="p5a" style="font-size:92px">Strength &amp; nutrition</span></div>
+    <div class="row" style="top:1130px"><span class="ln" id="p5b" style="font-size:92px"><span class="mk">after 40<i class="hl"></i></span></span></div>
+    <div class="ico" id="p5s1" style="left:190px;top:540px;width:120px;height:120px"><svg><use href="#i-sparkle"/></svg></div>
+    <div class="ico" id="p5s2" style="left:830px;top:680px;width:90px;height:90px"><svg><use href="#i-sparkle"/></svg></div>
+    <div class="ico" id="p5s3" style="left:800px;top:1320px;width:110px;height:110px"><svg><use href="#i-sparkle"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 06 Snap your plate -->
+  <section class="page" id="p6" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">lunch</span>
+    <span class="ln abs" id="p6a" style="left:150px;top:164px;font-size:110px">Snap your <span class="mk">plate.<i class="hl"></i></span></span>
+    <div class="taped" id="p6art" style="left:170px;top:420px;width:740px;height:740px"><img src="assets/draw/06-plate.png" alt=""></div>
+    <svg class="ov" viewBox="0 0 1080 1920"><g id="p6vf" fill="none" stroke="#3B322C" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M150 480 V400 H230"/><path d="M850 400 H930 V480"/><path d="M930 1100 V1180 H850"/><path d="M230 1180 H150 V1100"/></g><rect id="p6scan" x="170" y="410" width="740" height="10" rx="5" fill="#C2714F"/><rect id="p6flash" x="150" y="400" width="780" height="780" fill="#fff"/></svg>
+    <div class="ico" id="p6cam" style="left:150px;top:1230px;width:120px;height:120px"><svg><use href="#i-camera"/></svg></div>
+    <span class="tag" id="p6t1" style="left:310px;top:1236px">Salmon · 28g</span>
+    <span class="tag" id="p6t2" style="left:720px;top:1236px">Rice</span>
+    <span class="tag" id="p6t3" style="left:310px;top:1372px">Greens</span>
+    <span class="tag ok" id="p6t4" style="left:560px;top:1372px">Fits your day ✓</span>
+    <div class="stk" id="p6st" style="left:790px;top:1520px;width:210px;height:210px"><svg><use href="#e-yum"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 07 Close the gap -->
+  <section class="page" id="p7" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">today</span>
+    <span class="ln abs" id="p7a" style="left:150px;top:164px;font-size:118px">See the gap.</span>
+    <span class="ln abs" id="p7b" style="left:150px;top:316px;font-size:118px"><span class="mk">Close it.<i class="hl"></i></span></span>
+    <span class="ln abs" id="p7n" style="left:150px;top:560px;font-size:250px"><span id="n104">62</span>g</span>
+    <svg class="ov" viewBox="0 0 1080 1920"><path id="p7box" d="M152 902 C400 896 700 906 932 900 C936 940 930 990 934 1024 C700 1030 400 1020 150 1026 C146 990 154 940 152 902" fill="none" stroke="#3B322C" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="abs" id="p7fill" style="left:166px;top:914px;width:754px;height:98px;transform-origin:0 50%;background-color:#C08E82;background-image:repeating-linear-gradient(-55deg, rgba(255,255,255,.18) 0 10px, transparent 10px 26px)"></div>
+    <span class="ln abs" id="p7c" style="left:150px;top:1070px;font-size:80px">my target · 104g</span>
+    <div class="ico" id="p7up" style="left:170px;top:1290px;width:140px;height:140px"><svg><use href="#i-up"/></svg></div>
+    <div class="stk" id="p7st" style="left:680px;top:1250px;width:250px;height:250px"><svg><use href="#e-happy"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 08 Coach -->
+  <section class="page" id="p8" data-layout-allow-overflow>
+    <span class="ln abs lab" id="p8d" style="left:150px;top:72px;font-size:70px">Tuesday.</span>
+    <span class="ln abs" id="p8a" style="left:150px;top:164px;font-size:100px">Slept badly,</span>
+    <span class="ln abs" id="p8b" style="left:150px;top:316px;font-size:100px"><span class="mk">hot flushes<i class="hl"></i></span> again.</span>
+    <div class="stk" id="p8s1" style="left:860px;top:180px;width:170px;height:170px"><svg><use href="#e-tired"/></svg></div>
+    <div class="sticky" id="p8note" style="left:160px;top:560px;width:740px">
+      <div class="mono">KEEL COACH</div>
+      <div style="font-size:80px;line-height:1.1;margin-top:26px">Lighter session today. Protein at breakfast.</div>
+      <span class="tape" style="left:270px;top:-26px;transform:rotate(-3deg)"></span>
+    </div>
+    <div class="ico" id="p8sp" style="left:840px;top:530px;width:100px;height:100px"><svg><use href="#i-sparkle"/></svg></div>
+    <span class="ln abs" id="p8c1" style="left:150px;top:1090px;font-size:74px"><span class="box"></span>Eggs on toast · 30g</span>
+    <span class="ln abs" id="p8c2" style="left:150px;top:1242px;font-size:74px"><span class="box"></span>20 min lift</span>
+    <span class="ln abs" id="p8c3" style="left:150px;top:1394px;font-size:74px"><span class="box"></span>Walk after dinner</span>
+    <svg class="ov" viewBox="0 0 1080 1920"><path id="p8k1" d="M160 1130 L184 1158 L222 1100" fill="none" stroke="#C2714F" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path id="p8k2" d="M160 1282 L184 1310 L222 1252" fill="none" stroke="#C2714F" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="taped" id="p8art" style="left:790px;top:1470px;width:270px;height:405px"><img src="assets/draw/08-sofa.png" alt=""><span class="tape r" style="left:80px;top:10px;transform:rotate(6deg);width:150px"></span></div>
+    <div class="stk" id="p8s2" style="left:200px;top:1560px;width:190px;height:190px"><svg><use href="#e-happy"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 09 Lift -->
+  <section class="page" id="p9" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">Thursday</span>
+    <span class="ln abs" id="p9a" style="left:150px;top:164px;font-size:112px">Lift a little</span>
+    <span class="ln abs" id="p9b" style="left:150px;top:316px;font-size:112px"><span class="mk">more<i class="hl"></i></span> each week.</span>
+    <div class="taped" id="p9art" style="left:120px;top:520px;width:580px;height:870px"><img src="assets/draw/09-squat.png" alt=""><span class="tape" style="left:200px;top:20px;transform:rotate(-4deg)"></span></div>
+    <svg class="ov" viewBox="0 0 1080 1920"><g fill="#C2714F" stroke="#3B322C" stroke-width="6" stroke-linejoin="round"><rect class="cbar" x="712" y="1240" width="50" height="120" rx="6"/><rect class="cbar" x="776" y="1200" width="50" height="160" rx="6"/><rect class="cbar" x="840" y="1160" width="50" height="200" rx="6"/><rect class="cbar" x="904" y="1110" width="50" height="250" rx="6"/><rect class="cbar" x="968" y="1050" width="50" height="310" rx="6"/></g><path id="p9base" d="M700 1364 C800 1360 920 1366 1030 1362" fill="none" stroke="#3B322C" stroke-width="9" stroke-linecap="round"/></svg>
+    <div class="ico" id="p9db" style="left:760px;top:560px;width:180px;height:180px"><svg><use href="#i-dumbbell"/></svg></div>
+    <div class="stk" id="p9st" style="left:770px;top:780px;width:210px;height:210px"><svg><use href="#e-proud"/></svg></div>
+    <div class="ico" id="p9s1" style="left:760px;top:1420px;width:90px;height:90px"><svg><use href="#i-star"/></svg></div>
+    <div class="ico" id="p9s2" style="left:880px;top:1450px;width:76px;height:76px"><svg><use href="#i-star"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 10 Fridge to dinner -->
+  <section class="page" id="p10" data-layout-allow-overflow>
+    <span class="ln abs lab" style="left:150px;top:72px">dinner</span>
+    <span class="ln abs" id="p10a" style="left:150px;top:164px;font-size:100px">Photo your fridge.</span>
+    <span class="ln abs" id="p10b" style="left:150px;top:316px;font-size:110px"><span class="mk">Get dinner.<i class="hl"></i></span></span>
+    <div class="taped" id="p10art" style="left:110px;top:500px;width:580px;height:870px"><img src="assets/draw/10-fridge.png" alt=""><span class="tape g" style="left:180px;top:10px;transform:rotate(4deg)"></span></div>
+    <div class="ico" id="p10cam" style="left:780px;top:520px;width:140px;height:140px"><svg><use href="#i-camera"/></svg></div>
+    <div class="card" id="p10card" style="left:560px;top:1000px;width:460px">
+      <div style="width:96px;height:96px;margin:6px 0 4px"><svg style="width:100%;height:100%"><use href="#i-pan"/></svg></div>
+      <div style="font-size:64px;line-height:1.02">Chicken, spinach &amp; feta</div>
+      <div class="mono" style="color:#6D6157;margin-top:16px;font-size:25px;white-space:nowrap">38G PROTEIN · 20 MIN</div>
+      <span class="tape r" style="left:140px;top:-24px;transform:rotate(-5deg)"></span>
+    </div>
+    <div class="stk" id="p10st" style="left:810px;top:1520px;width:210px;height:210px"><svg><use href="#e-love"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 11 Built for the body you have now -->
+  <section class="page" id="p11" data-layout-allow-overflow>
+    <span class="ln abs" id="p11a" style="left:150px;top:772px;font-size:104px">Built for the body</span>
+    <span class="ln abs" id="p11b" style="left:150px;top:924px;font-size:104px">you have <span class="mk">now.<i class="hl"></i></span></span>
+    <div class="stk c11" style="left:150px;top:170px;width:200px;height:200px"><svg><use href="#e-puzzled"/></svg></div>
+    <div class="stk c11" style="left:770px;top:150px;width:190px;height:190px"><svg><use href="#e-meh"/></svg></div>
+    <div class="stk c11" style="left:450px;top:380px;width:180px;height:180px"><svg><use href="#e-wow"/></svg></div>
+    <div class="stk c11" style="left:160px;top:1200px;width:190px;height:190px"><svg><use href="#e-sleepy"/></svg></div>
+    <div class="stk c11" style="left:460px;top:1180px;width:180px;height:180px"><svg><use href="#e-yum"/></svg></div>
+    <div class="stk c11" style="left:780px;top:1160px;width:200px;height:200px"><svg><use href="#e-happy"/></svg></div>
+    <div class="stk c11" style="left:250px;top:1480px;width:210px;height:210px"><svg><use href="#e-proud"/></svg></div>
+    <div class="stk c11" style="left:660px;top:1470px;width:220px;height:220px"><svg><use href="#e-love"/></svg></div>
+    <div class="shade"></div>
+  </section>
+
+  <!-- 12 Strong for life -->
+  <section class="page" id="p12" data-layout-allow-overflow>
+    <div class="row" style="top:560px"><span class="ln" id="p12k" style="font-size:300px">keel<span class="kdot" id="p12dot"></span></span></div>
+    <div class="row" style="top:960px"><span class="ln" id="p12a" style="font-size:112px">Strong for <span class="mk">life.<i class="hl"></i></span></span></div>
+    <div class="ico" id="p12heart" style="left:860px;top:900px;width:96px;height:96px"><svg><use href="#i-heart"/></svg></div>
+    <div class="row" style="top:1320px"><span class="cta" id="p12cta">Start your free trial</span></div>
+    <span class="tape" id="p12tape" style="left:250px;top:1300px;transform:rotate(-16deg);width:150px"></span>
+  </section>
+
+  <!-- sound -->
+  <audio id="s-turn1" data-start="2.31" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn2" data-start="4.24" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn3" data-start="6.04" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-flip" data-start="8.09" data-duration="0.8" data-volume="0.3" src="assets/sfx/fill.wav"></audio>
+  <audio id="s-turn5" data-start="10.24" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn6" data-start="12.55" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn7" data-start="14.44" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn8" data-start="16.75" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn9" data-start="19.15" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn10" data-start="21.04" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-turn11" data-start="22.84" data-duration="0.06" data-volume="0.18" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-pen1" data-start="0.07" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-pen2" data-start="0.74" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-pen3" data-start="1.37" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-st1" data-start="2.04" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-x2" data-start="3.61" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio id="s-st2" data-start="3.83" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-cnt1" data-start="4.63" data-duration="1.3" data-volume="0.25" src="assets/sfx/counter.wav"></audio>
+  <audio id="s-st3" data-start="5.41" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-r1" data-start="6.31" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio id="s-r2" data-start="6.91" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio id="s-r3" data-start="7.51" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio id="s-dot5" data-start="9.16" data-duration="0.7" data-volume="0.35" src="assets/sfx/star.wav"></audio>
+  <audio id="s-sp1" data-start="9.61" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-sp2" data-start="9.84" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-sp3" data-start="10.06" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-cam6" data-start="11.11" data-duration="0.09" data-volume="0.4" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-tag1" data-start="11.41" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-tag2" data-start="11.71" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-tag3" data-start="12.01" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-fits" data-start="12.31" data-duration="0.9" data-volume="0.25" src="assets/sfx/success.wav"></audio>
+  <audio id="s-cnt2" data-start="13.36" data-duration="1.3" data-volume="0.25" src="assets/sfx/counter.wav"></audio>
+  <audio id="s-st7" data-start="14.04" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-st8" data-start="15.31" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-note" data-start="15.61" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio id="s-k1" data-start="16.24" data-duration="0.06" data-volume="0.35" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-k2" data-start="16.45" data-duration="0.06" data-volume="0.35" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-b1" data-start="17.70" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-b2" data-start="18.00" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-b3" data-start="18.30" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-b4" data-start="18.61" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="s-st9" data-start="18.64" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-cam10" data-start="19.96" data-duration="0.09" data-volume="0.4" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-card" data-start="20.19" data-duration="0.16" data-volume="0.3" src="assets/sfx/pop.wav"></audio>
+  <audio id="s-st10" data-start="20.63" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-c1" data-start="21.54" data-duration="0.09" data-volume="0.3" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-c2" data-start="21.98" data-duration="0.09" data-volume="0.3" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-c3" data-start="22.43" data-duration="0.09" data-volume="0.3" src="assets/sfx/snap.wav"></audio>
+  <audio id="s-end" data-start="23.61" data-duration="1.6" data-volume="0.3" src="assets/sfx/chime.wav"></audio>
+  <audio id="s-cta" data-start="24.85" data-duration="0.9" data-volume="0.25" src="assets/sfx/success.wav"></audio>
+</div>
+
+<script>
+(function () {
+  const realTl = gsap.timeline({ paused: true });
+  // Ukulele retime. Scenes were authored on the old 2s grid; MAP pins each old scene start to a beat
+  // of the folk track (100 BPM, beat 0.6s from 0.31s) and stretches everything inside a scene to fit.
+  const MAP = [[0, 0], [2.02, 2.71], [4.02, 4.51], [6.02, 6.31], [8.02, 8.71], [10.02, 10.51], [12.02, 12.91],
+    [14.02, 14.71], [16.03, 17.11], [18.02, 19.51], [20.02, 21.31], [22.02, 23.11], [26.5, 27.0]];
+  const seg = (t) => { for (let i = 1; i < MAP.length; i++) if (t <= MAP[i][0]) return i; return MAP.length - 1; };
+  const M = (t) => { const i = seg(t), [a0, b0] = MAP[i - 1], [a1, b1] = MAP[i]; return b0 + ((t - a0) * (b1 - b0)) / (a1 - a0); };
+  const K = (t) => { const i = seg(t), [a0, b0] = MAP[i - 1], [a1, b1] = MAP[i]; return (b1 - b0) / (a1 - a0); };
+  const fit = (v, k) => {
+    if (!v || typeof v !== 'object') return v;
+    const o = { ...v };
+    if (typeof o.duration === 'number') o.duration *= k;
+    if (typeof o.stagger === 'number') o.stagger *= k;
+    return o;
+  };
+  const tl = {
+    to: (t, v, at) => (realTl.to(t, fit(v, K(at)), M(at)), tl),
+    fromTo: (t, f, v, at) => (realTl.fromTo(t, f, fit(v, K(at)), M(at)), tl),
+    set: (t, v, at) => (realTl.set(t, v, M(at)), tl),
+  };
+  const pages = ['#p1', '#p2', '#p3', '#p4', '#pf1', '#pf2', '#pf3', '#p5', '#p6', '#p7', '#p8', '#p9', '#p10', '#p11', '#p12'];
+  pages.forEach((p, i) => gsap.set(p, { zIndex: 100 - i, autoAlpha: i === 0 ? 1 : 0 }));
+
+  // punch holes on every page
+  document.querySelectorAll('.page').forEach((pg) => {
+    [380, 960, 1540].forEach((y) => { const h = document.createElement('span'); h.className = 'hole'; h.style.top = y + 'px'; pg.appendChild(h); });
+  });
+
+  // initial states (outside the timeline)
+  gsap.set('.ln', { clipPath: 'inset(-30% 100% -30% -6%)' });
+  gsap.set('.hl', { scaleX: 0 });
+  gsap.set('.kdot', { scale: 0 });
+  gsap.set('.cbar', { scaleY: 0, transformOrigin: '50% 100%' });
+  gsap.set('#p7fill', { scaleX: 0 });
+  gsap.set('#p6scan, #p6flash', { opacity: 0 });
+
+  // helpers
+  const write = (sel, at, dur = 0.32) => tl.to(sel, { clipPath: 'inset(-30% -6% -30% -6%)', duration: dur, ease: 'none' }, at);
+  const hl = (sel, at) => tl.to(`${sel} .hl`, { scaleX: 1, duration: 0.24, ease: 'power2.out' }, at);
+  const slap = (sel, at, r = 0) => tl.fromTo(sel, { autoAlpha: 0, scale: 1.7, rotation: r - 18 }, { autoAlpha: 1, scale: 1, rotation: r, duration: 0.26, ease: 'back.out(2.4)' }, at);
+  const tape = (sel, at, r = 0) => tl.fromTo(sel, { autoAlpha: 0, scale: 1.12, y: -40, rotation: r + 4 }, { autoAlpha: 1, scale: 1, y: 0, rotation: r, duration: 0.3, ease: 'back.out(1.8)' }, at);
+  const pen = (sel, at, dur = 0.3) => {
+    const el = typeof sel === 'string' ? document.querySelector(sel) : sel;
+    const paths = el.tagName === 'path' ? [el] : [...el.querySelectorAll('path')];
+    paths.forEach((p) => { const l = p.getTotalLength(); p.style.strokeDasharray = l; p.style.strokeDashoffset = l; });
+    tl.to(paths, { strokeDashoffset: 0, duration: dur, ease: 'power2.out', stagger: dur * 0.4 }, at);
+  };
+  const count = (id, from, to, at, dur) => {
+    const el = document.getElementById(id), o = { v: from };
+    tl.to(o, { v: to, duration: dur, ease: 'expo.out', onUpdate: () => (el.textContent = Math.round(o.v)) }, at);
+  };
+  // Glide: the pen runs off the bottom of the page, the journal scrolls up to the next entry,
+  // and the same line carries on from the top edge, landing as a bullet by the day label.
+  const NS = 'http://www.w3.org/2000/svg';
+  const SEAMS = [300, 760, 240, 820, 420, 700, 260, 780, 360, 640, 300];
+  let seam = 0;
+  const thread = (page, d, w = 7) => {
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'ov');
+    svg.setAttribute('viewBox', '0 0 1080 1920');
+    svg.innerHTML = `<path d="${d}" fill="none" stroke="#3B322C" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    document.querySelector(page).appendChild(svg);
+    return svg.querySelector('path');
+  };
+  const turn = (from, to, at, dur = 0.5, loopy = false) => {
+    const x = SEAMS[seam++ % SEAMS.length];
+    const exitD = loopy
+      ? `M 170 1790 C 300 1700 360 1880 470 1810 S 640 1700 700 1800 S 560 1890 640 1850 S ${x + 60} 1840 ${x} 1930`
+      : `M ${x - 230} 1800 C ${x - 140} 1760 ${x - 70} 1860 ${x + 20} 1815 S ${x + 50} 1880 ${x} 1930`;
+    const ex = thread(from, exitD);
+    // Arrives above the day label (top 72px, from x 150) and drops into a bullet to its left.
+    const en = thread(to, `M ${x} -10 C ${x + 30} 26 ${x - 40} 40 ${x - 140} 36 S 180 28 128 46 C 106 60 112 86 124 102 m -6 0 a 8 8 0 1 0 12 0`);
+    pen(ex, at - 0.12, loopy ? 0.5 : 0.3);
+    tl.set(to, { autoAlpha: 1, y: 1920 }, at + 0.14);
+    tl.to(from, { y: -1920, duration: dur, ease: 'expo.inOut' }, at + 0.14);
+    tl.to(to, { y: 0, duration: dur, ease: 'expo.inOut' }, at + 0.14);
+    tl.set(from, { autoAlpha: 0 }, at + 0.14 + dur);
+    pen(en, at + 0.14 + dur * 0.7, 0.34);
+  };
+
+  // 01 Monday: Same meals / Same walks / Different body
+  write('#p1 .lab', 0.02, 0.18);
+  write('#p1a', 0.05, 0.3); slap('#p1fork', 0.38, -8);
+  tape('#p1art', 0.28, -2);
+  write('#p1b', 0.55, 0.3); slap('#p1shoe', 0.88, 6);
+  write('#p1c', 1.02, 0.36); hl('#p1c', 1.4);
+  slap('#p1st', 1.52, 8);
+  turn('#p1', '#p2', 1.72);
+
+  // 02 Built for 25
+  write('#p2 .lab', 2.04, 0.18);
+  write('#p2a', 2.1, 0.32); write('#p2b', 2.42, 0.22); write('#p2c', 2.64, 0.32); hl('#p2c', 2.98);
+  tape('#p2art', 2.3, 1.5);
+  pen('#p2x', 3.02, 0.26);
+  slap('#p2st', 3.27, -8);
+  turn('#p2', '#p3', 3.72);
+
+  // 03 62g
+  write('#p3 .lab', 4.04, 0.15);
+  pen('#p3ring', 4.02, 0.55);
+  write('#p3n', 4.1, 0.25); count('n62', 0, 62, 4.15, 0.85);
+  write('#p3a', 4.55, 0.3); write('#p3b', 4.85, 0.32); hl('#p3b', 5.2);
+  tape('#p3art', 4.7, -3);
+  slap('#p3st', 5.02, 10);
+  turn('#p3', '#p4', 5.72);
+
+  // 04 three entries slam on the beats
+  write('#p4 .lab', 6.04, 0.15);
+  tape('#p4r1', 6.02, -3); write('#p4a1', 6.1, 0.14); write('#p4b1', 6.22, 0.2); hl('#p4b1', 6.42);
+  slap('#p4moon', 6.3, -10); slap('#p4heat', 6.36, 0); slap('#p4s1', 6.38, 8);
+  tl.to('#p4heat', { y: -10, duration: 0.2, yoyo: true, repeat: 5, ease: 'sine.inOut' }, 6.6);
+  tape('#p4r2', 6.52, 2.5); write('#p4a2', 6.6, 0.18); write('#p4b2', 6.75, 0.16); hl('#p4b2', 6.92); slap('#p4s2', 6.88, -6);
+  tape('#p4r3', 7.02, -2); write('#p4a3', 7.08, 0.18); hl('#p4a3', 7.26); slap('#p4fog', 7.12, 0); slap('#p4s3', 7.3, 6);
+  tl.to('#p4fog', { x: 16, duration: 0.25, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 7.3);
+
+  // quick flip-through into the drop
+  turn('#p4', '#p5', 7.55, 0.5, true);
+
+  // 05 keel.
+  write('#p5k', 8.1, 0.4);
+  tl.fromTo('#p5dot', { scale: 0 }, { scale: 1, duration: 0.35, ease: 'back.out(3)' }, 8.52);
+  write('#p5a', 9.02, 0.32); write('#p5b', 9.3, 0.2); hl('#p5b', 9.5);
+  ['#p5s1', '#p5s2', '#p5s3'].forEach((s, i) => { slap(s, 9.02 + i * 0.25, 0); tl.to(s, { rotation: 90, duration: 1, ease: 'none' }, 9.3 + i * 0.25); });
+  turn('#p5', '#p6', 9.72);
+
+  // 06 Snap your plate
+  write('#p6 .lab', 10.04, 0.15);
+  write('#p6a', 10.05, 0.34); hl('#p6a', 10.4);
+  tape('#p6art', 10.15, -2);
+  pen('#p6vf', 10.3, 0.22);
+  slap('#p6cam', 10.27, -8);
+  tl.to('#p6cam', { scale: 0.82, duration: 0.07, yoyo: true, repeat: 1 }, 10.52);
+  tl.fromTo('#p6flash', { opacity: 0.75 }, { opacity: 0, duration: 0.3, immediateRender: false }, 10.52);
+  tl.set('#p6scan', { opacity: 1 }, 10.6);
+  tl.fromTo('#p6scan', { y: 0 }, { y: 740, duration: 0.55, ease: 'sine.inOut', immediateRender: false }, 10.6);
+  tl.to('#p6scan', { opacity: 0, duration: 0.08 }, 11.16);
+  slap('#p6t1', 10.77, -3); slap('#p6t2', 11.02, 4); slap('#p6t3', 11.27, 2); slap('#p6t4', 11.52, -2);
+  slap('#p6st', 11.56, 8);
+  turn('#p6', '#p7', 11.72);
+
+  // 07 Close the gap
+  write('#p7 .lab', 12.04, 0.15);
+  write('#p7a', 12.04, 0.3); write('#p7b', 12.3, 0.22); hl('#p7b', 12.55);
+  write('#p7n', 12.1, 0.2);
+  pen('#p7box', 12.2, 0.3);
+  tl.to('#p7fill', { scaleX: 62 / 104, duration: 0.2, ease: 'power2.out' }, 12.32);
+  tl.to('#p7fill', { scaleX: 1, duration: 0.9, ease: 'expo.out' }, 12.52);
+  count('n104', 62, 104, 12.52, 0.9);
+  write('#p7c', 12.7, 0.3);
+  slap('#p7up', 12.85, 0);
+  tl.to('#p7up', { y: -22, duration: 0.22, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 13.1);
+  slap('#p7st', 13.27, -6);
+  turn('#p7', '#p8', 13.72);
+
+  // 08 Coach
+  write('#p8d', 14.04, 0.18);
+  write('#p8a', 14.12, 0.24); write('#p8b', 14.3, 0.3); hl('#p8b', 14.6);
+  slap('#p8s1', 14.52, 6);
+  tl.fromTo('#p8note', { autoAlpha: 0, rotationX: -75, rotation: -6, transformOrigin: '50% 0%', transformPerspective: 1600 }, { autoAlpha: 1, rotationX: 0, rotation: -2, duration: 0.34, ease: 'back.out(1.6)' }, 14.77);
+  slap('#p8sp', 14.98, 0);
+  tape('#p8art', 14.9, 3);
+  write('#p8c1', 15.02, 0.18); write('#p8c2', 15.14, 0.14); write('#p8c3', 15.24, 0.18);
+  pen('#p8k1', 15.3, 0.12); pen('#p8k2', 15.48, 0.12);
+  slap('#p8s2', 15.55, -6);
+  turn('#p8', '#p9', 15.73);
+
+  // 09 Lift
+  write('#p9 .lab', 16.05, 0.15);
+  write('#p9a', 16.05, 0.26); write('#p9b', 16.28, 0.3); hl('#p9b', 16.6);
+  tape('#p9art', 16.15, -2);
+  slap('#p9db', 16.27, -12);
+  tl.to('#p9db', { rotation: 4, duration: 0.22, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 16.55);
+  pen('#p9base', 16.4, 0.2);
+  tl.to('.cbar', { scaleY: 1, duration: 0.28, ease: 'back.out(2)', stagger: 0.25 }, 16.52);
+  slap('#p9st', 17.3, 8);
+  slap('#p9s1', 17.45, -10); slap('#p9s2', 17.55, 12);
+  turn('#p9', '#p10', 17.72);
+
+  // 10 Fridge to dinner
+  write('#p10 .lab', 18.04, 0.15);
+  write('#p10a', 18.05, 0.34); write('#p10b', 18.36, 0.26); hl('#p10b', 18.64);
+  tape('#p10art', 18.2, -2);
+  slap('#p10cam', 18.27, 8);
+  tl.to('#p10cam', { scale: 0.82, duration: 0.07, yoyo: true, repeat: 1 }, 18.52);
+  tape('#p10card', 18.77, 3);
+  slap('#p10st', 19.27, -8);
+  turn('#p10', '#p11', 19.72);
+
+  // 11 every feeling from the week, one page
+  write('#p11a', 20.1, 0.36); write('#p11b', 20.46, 0.3); hl('#p11b', 20.8);
+  const rots = [-10, 8, -6, 6, -8, 10, -4, 6];
+  document.querySelectorAll('.c11').forEach((el, i) => slap(el, 20.27 + i * 0.16, rots[i]));
+  turn('#p11', '#p12', 21.72);
+
+  // 12 Strong for life
+  write('#p12k', 22.15, 0.42);
+  tl.fromTo('#p12dot', { scale: 0 }, { scale: 1, duration: 0.35, ease: 'back.out(3)' }, 22.6);
+  write('#p12a', 23.1, 0.4); hl('#p12a', 23.6);
+  slap('#p12heart', 23.8, 12);
+  tl.to('#p12heart', { scale: 1.15, duration: 0.22, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 24.1);
+  slap('#p12cta', 24.02, -2);
+  tape('#p12tape', 24.2, -16);
+  realTl.set({}, {}, 27.0);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines['main'] = realTl;
+  realTl.seek(0);
+})();
+</script>
+</body>
+</html>

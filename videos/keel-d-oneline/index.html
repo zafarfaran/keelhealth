@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>Keel launch, one line</title>
+<script src="assets/gsap.min.js"></script>
+<script src="assets/lineart.js"></script>
+<style>
+  @font-face { font-family: Bricolage; src: url(assets/fonts/BricolageGrotesque-var.woff2) format('woff2'); font-weight: 400 800; }
+  :root { --ink:#3B322C; --ivory:#FBF8F4; --almond:#EDE3D6; --terra:#C2714F; --terra-deep:#A85A3C; --clay:#C08E82; --apricot:#F0C9A8; --honey:#E8C05F; --plum:#A9647A; --olive:#9AA88F; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--almond); }
+  #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: Bricolage, system-ui, sans-serif; font-weight: 800; color: var(--ink); font-optical-sizing: auto; }
+
+  .scene { position: absolute; inset: 0; visibility: hidden; overflow: hidden; }
+  .f-almond { background: var(--almond); color: var(--ink); }
+  .f-terra { background: var(--terra); color: var(--ivory); }
+  .f-honey { background: var(--honey); color: var(--ink); }
+  .f-plum { background: var(--plum); color: var(--ivory); }
+  .f-ink { background: var(--ink); color: var(--ivory); }
+  .f-ivory { background: var(--ivory); color: var(--ink); }
+
+  .t { position: absolute; left: 80px; right: 80px; letter-spacing: -0.045em; line-height: .95; }
+  .t > span { display: block; transform-origin: 0% 80%; }
+  .t.c > span { transform-origin: 50% 80%; }
+  .c { text-align: center; }
+  .em-deep { color: var(--terra-deep); }
+  .em-ink { color: var(--ink); }
+  .small { font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+
+  .sketch { position: absolute; mix-blend-mode: multiply; }
+  .sketch.inv { filter: grayscale(1) invert(1) brightness(1.2); mix-blend-mode: screen; }
+
+  svg.ln { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; pointer-events: none; }
+  svg.ln path { fill: none; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+  .k path, path.k { stroke: var(--ink); }
+  .v path, path.v { stroke: var(--ivory); }
+
+  .emo { position: absolute; }
+  .emo svg { width: 100%; height: 100%; overflow: visible; display: block; }
+
+  .chip { display: inline-block; font-size: 46px; font-weight: 700; letter-spacing: -0.02em; padding: 10px 30px; border: 6px solid var(--ink); border-radius: 999px; margin: 0 14px 18px 0; }
+  #dot5, #dot12 { position: absolute; width: 64px; height: 64px; border-radius: 50%; background: var(--clay); }
+  .bar { position: absolute; transform-origin: 50% 100%; background: var(--ivory); border-radius: 10px; }
+  .tile { position: absolute; width: 150px; height: 266px; border-radius: 14px; box-shadow: inset 0 0 0 3px rgba(59,50,44,.14); }
+</style>
+</head>
+<body>
+<!-- Keel emoji, one-line version: stroke only, colour from currentColor -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><circle id="fc" cx="50" cy="52" r="40" fill="none" stroke="currentColor" stroke-width="5"/></defs>
+  <symbol id="e-puzzled" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><use href="#fc"/><path d="M28 34 Q36 26 45 32"/><path d="M57 38 L71 37"/><path d="M38 71 Q44 65 50 71 T63 70"/><path d="M84 8 Q95 6 94 15 Q93 20 87 21 L87 26"/></g><circle cx="38" cy="47" r="4.5" fill="currentColor"/><circle cx="63" cy="48" r="4.5" fill="currentColor"/><circle cx="87" cy="33" r="3" fill="currentColor"/></symbol>
+  <symbol id="e-meh" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><use href="#fc"/><path d="M29 47 H47"/><path d="M54 47 H72"/><path d="M38 70 H62"/></g><circle cx="40" cy="42" r="4" fill="currentColor"/><circle cx="65" cy="42" r="4" fill="currentColor"/></symbol>
+  <symbol id="e-wow" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5"><use href="#fc"/><circle cx="37" cy="45" r="7"/><circle cx="63" cy="45" r="7"/><ellipse cx="50" cy="71" rx="7" ry="9"/></g><circle cx="38" cy="46" r="3" fill="currentColor"/><circle cx="64" cy="46" r="3" fill="currentColor"/></symbol>
+  <symbol id="e-sleepy" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><use href="#fc"/><path d="M29 49 Q37 56 45 49"/><path d="M55 49 Q63 56 71 49"/><circle cx="50" cy="70" r="5"/><path d="M74 6 H86 L74 18 H86"/></g></symbol>
+  <symbol id="e-tired" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><use href="#fc"/><path d="M29 43 L44 36"/><path d="M71 43 L56 36"/><path d="M35 71 Q42 64 50 71 Q58 78 65 71"/><path d="M86 16 Q94 29 86 34 Q78 29 86 16Z"/></g><circle cx="38" cy="50" r="4.5" fill="currentColor"/><circle cx="62" cy="50" r="4.5" fill="currentColor"/></symbol>
+  <symbol id="e-dizzy" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"><use href="#fc"/><path d="M38 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5"/><path d="M63 48 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 4 -5"/><path d="M37 72 Q43 67 50 72 Q57 77 63 72"/></g></symbol>
+  <symbol id="e-yum" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><use href="#fc"/><path d="M29 51 Q37 41 45 51"/><path d="M55 51 Q63 41 71 51"/><path d="M33 62 Q50 80 67 62"/><path d="M52 70 Q57 84 65 68"/></g></symbol>
+  <symbol id="e-happy" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><use href="#fc"/><path d="M30 50 Q38 41 46 50"/><path d="M54 50 Q62 41 70 50"/><path d="M38 64 Q50 76 62 64"/></g></symbol>
+  <symbol id="e-proud" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><use href="#fc"/><path d="M30 49 Q38 41 46 49"/><path d="M34 62 Q50 80 66 62"/></g><circle cx="62" cy="47" r="4.5" fill="currentColor"/></symbol>
+  <symbol id="e-love" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"><use href="#fc"/><path d="M33 62 Q50 84 67 62 Z"/></g><path d="M26 42 C26 34 36 32 38 39 C40 32 50 34 50 42 C50 50 38 56 38 58 C38 56 26 50 26 42Z M50 42 C50 34 60 32 62 39 C64 32 74 34 74 42 C74 50 62 56 62 58 C62 56 50 50 50 42Z" fill="#C2714F" stroke="currentColor" stroke-width="3"/></symbol>
+</svg>
+
+<div id="root" data-composition-id="main" data-start="0" data-duration="27.4" data-width="1080" data-height="1920">
+  <audio id="bgm" src="assets/bgm/track.mp3" data-start="0" data-duration="27.4" data-track-index="9" data-volume="0.85" data-fade-out="0.9"></audio>
+
+  <!-- 01 almond -->
+  <section class="scene f-almond" id="s1">
+    <div class="t" style="top:140px;font-size:150px">
+      <span data-layout-allow-overlap id="l1a">Same meals.</span>
+    </div>
+    <div class="t" style="top:140px;font-size:150px"><span data-layout-allow-overlap id="l1b">Same walks.</span></div>
+    <div class="t" id="s1t" style="top:282px;font-size:150px"><span data-layout-allow-overlap>Different</span><span data-layout-allow-overlap class="em-deep">body.</span></div>
+    <div class="sketch" id="d1" data-src="assets/draw/01-kitchen.png" data-w="760" data-h="1140" data-rows="10" style="left:160px;top:640px;width:760px;height:1140px"></div>
+    <div class="emo" id="em1" style="right:130px;top:650px;width:200px;height:200px;color:#3B322C"><svg><use href="#e-puzzled"/></svg></div>
+    <svg class="ln k" viewBox="0 0 1080 1920"><path id="s1o" d="M -20 600 C 30 592 55 586 80 586 L 560 586"/><path id="s1x" d="M 560 586 C 900 586 1040 620 1040 900 C 1040 1300 1050 1450 1100 1490"/></svg>
+  </section>
+
+  <!-- 02 terracotta -->
+  <section class="scene f-terra" id="s2">
+    <div class="t" id="s2t" style="top:140px;font-size:120px"><span data-layout-allow-overlap>Most apps were</span><span data-layout-allow-overlap>built for</span><span data-layout-allow-overlap class="em-ink">25-year-olds.</span></div>
+    <div class="sketch inv" id="d2" data-src="assets/draw/02-phone.png" data-w="800" data-h="800" style="left:140px;top:620px;width:800px;height:800px"></div>
+    <div class="emo" id="em2" style="right:80px;top:1480px;width:220px;height:220px;color:#3B322C"><svg><use href="#e-meh"/></svg></div>
+    <svg class="ln v" viewBox="0 0 1080 1920"><path id="s2i" d="M -20 1490 C 60 1480 110 1440 150 1380"/><path id="s2o" d="M 150 1380 C 400 1000 650 1300 900 980 C 700 1050 400 1200 250 1050"/><path id="s2x" d="M 250 1050 C 150 950 300 1700 700 1760 C 900 1790 1000 1760 1100 1750"/></svg>
+  </section>
+
+  <!-- 03 honey -->
+  <section class="scene f-honey" id="s3">
+    <div class="t c" style="top:520px;font-size:340px;letter-spacing:-0.06em;line-height:1"><span id="n62">0g</span></div>
+    <div class="t c small" id="s3t" style="top:1110px;font-size:68px"><span data-layout-allow-overlap>of protein a day.</span><span data-layout-allow-overlap>Most women over 40.*</span></div>
+    <div class="sketch" id="d3" data-src="assets/draw/03-breakfast.png" data-w="420" data-h="420" style="left:330px;top:1320px;width:420px;height:420px"></div>
+    <div class="emo" id="em3" style="right:90px;top:1430px;width:180px;height:180px;color:#3B322C"><svg><use href="#e-wow"/></svg></div>
+    <svg class="ln k" viewBox="0 0 1080 1920"><path id="s3i" d="M -20 1750 C 100 1740 160 1500 180 1200"/><path id="s3o" d="M 180 1200 C 160 1000 150 820 220 660 C 320 420 760 380 880 560 C 990 730 900 980 640 1020 C 420 1050 260 960 230 800"/><path id="s3x" d="M 230 800 C 240 330 760 300 940 420 C 1030 480 1060 640 1100 700"/></svg>
+  </section>
+
+  <!-- 04 plum -->
+  <section class="scene f-plum" id="s4">
+    <div class="sketch inv" id="d4a" data-src="assets/draw/04a-night.png" data-w="460" data-h="460" style="left:100px;top:220px;width:460px;height:460px"></div>
+    <div class="sketch inv" id="d4b" data-src="assets/draw/04b-stairs.png" data-w="460" data-h="460" style="left:100px;top:780px;width:460px;height:460px"></div>
+    <div class="sketch inv" id="d4c" data-src="assets/draw/04c-desk.png" data-w="460" data-h="460" style="left:100px;top:1340px;width:460px;height:460px"></div>
+    <div class="t small" id="c4a" style="top:300px;left:600px;right:60px;font-size:66px"><span data-layout-allow-overlap>3am.</span><span data-layout-allow-overlap>Wide awake.</span></div>
+    <div class="t small" id="c4b" style="top:860px;left:600px;right:60px;font-size:66px"><span data-layout-allow-overlap>Stairs feel</span><span data-layout-allow-overlap>steeper.</span></div>
+    <div class="t small" id="c4c" style="top:1420px;left:600px;right:60px;font-size:66px"><span data-layout-allow-overlap>4pm</span><span data-layout-allow-overlap>fog.</span></div>
+    <div class="emo" id="em4a" style="left:610px;top:520px;width:130px;height:130px;color:#FBF8F4"><svg><use href="#e-sleepy"/></svg></div>
+    <div class="emo" id="em4b" style="left:610px;top:1080px;width:130px;height:130px;color:#FBF8F4"><svg><use href="#e-tired"/></svg></div>
+    <div class="emo" id="em4c" style="left:610px;top:1640px;width:130px;height:130px;color:#FBF8F4"><svg><use href="#e-dizzy"/></svg></div>
+    <svg class="ln v" viewBox="0 0 1080 1920"><path id="s4i" d="M -20 700 L 80 700"/><path id="s4a" d="M 80 700 L 80 200 L 1000 200 L 1000 700 L 80 700 L 80 760"/><path id="s4b" d="M 80 760 L 1000 760 L 1000 1260 L 80 1260 L 80 760 L 80 1320"/><path id="s4c" d="M 80 1320 L 1000 1320 L 1000 1820 L 80 1820 L 80 1320"/></svg>
+  </section>
+
+  <!-- 05 ink -->
+  <section class="scene f-ink" id="s5">
+    <div class="t c" id="wm5" style="top:640px;font-size:300px;letter-spacing:-0.05em;line-height:1"><span data-layout-allow-overlap><i class="lt" style="font-style:normal;display:inline-block">k</i><i class="lt" style="font-style:normal;display:inline-block">e</i><i class="lt" style="font-style:normal;display:inline-block">e</i><i class="lt" style="font-style:normal;display:inline-block">l</i><i style="display:inline-block;width:60px"></i></span></div>
+    <div id="dot5" style="left:788px;top:816px"></div>
+    <div class="t c small" id="s5t" style="top:1080px;font-size:64px;color:#F0C9A8"><span data-layout-allow-overlap>Strength &amp; nutrition</span><span data-layout-allow-overlap>after 40</span></div>
+    <svg class="ln v" viewBox="0 0 1080 1920"><path id="s5x" d="M 820 848 C 950 920 900 1380 1100 1500"/></svg>
+  </section>
+
+  <!-- 06 almond -->
+  <section class="scene f-almond" id="s6">
+    <div class="t" id="s6t" style="top:130px;font-size:150px"><span data-layout-allow-overlap>Snap your</span><span data-layout-allow-overlap class="em-deep">plate.</span></div>
+    <div class="sketch" id="d6" data-src="assets/draw/06-plate.png" data-w="800" data-h="800" style="left:140px;top:520px;width:800px;height:800px"></div>
+    <div id="scan" style="position:absolute;left:130px;top:500px;width:820px;height:8px;border-radius:4px;background:#A85A3C;opacity:0"></div>
+    <div style="position:absolute;left:80px;right:60px;top:1420px">
+      <span class="chip" id="ch1">Salmon · 28g</span><span class="chip" id="ch2">Rice</span><span class="chip" id="ch3">Greens</span><span class="chip" id="ch4" style="background:#9AA88F">Fits your day</span>
+    </div>
+    <div class="emo" id="em6" style="right:80px;top:1660px;width:200px;height:200px;color:#3B322C"><svg><use href="#e-yum"/></svg></div>
+    <svg class="ln k" viewBox="0 0 1080 1920"><path id="s6i" d="M 1100 1500 C 1040 1450 1000 1380 970 1350"/><path id="s6o" d="M 970 1350 L 970 490 L 110 490 L 110 1350 L 970 1350"/><path id="s6x" d="M 970 1350 C 1020 1370 1060 1390 1100 1400"/></svg>
+  </section>
+
+  <!-- 07 terracotta -->
+  <section class="scene f-terra" id="s7">
+    <div class="t" id="s7t" style="top:140px;font-size:150px"><span data-layout-allow-overlap>See the gap.</span><span data-layout-allow-overlap class="em-ink">Close it.</span></div>
+    <div class="t c" style="top:560px;font-size:280px;letter-spacing:-0.06em;line-height:1"><span id="n104">62g</span></div>
+    <div id="fill" style="position:absolute;left:112px;top:1142px;width:856px;height:76px;border-radius:38px;background:#FBF8F4;transform-origin:0 50%"></div>
+    <div class="t small" id="s7t2" style="top:1270px;font-size:56px;text-align:right"><span data-layout-allow-overlap>Your target · 104g</span></div>
+    <div class="emo" id="em7" style="right:120px;top:1380px;width:220px;height:220px;color:#3B322C"><svg><use href="#e-happy"/></svg></div>
+    <svg class="ln v" viewBox="0 0 1080 1920"><path id="s7i" d="M -20 1400 C 60 1380 100 1300 150 1230"/><path id="s7o" d="M 150 1230 L 930 1230 A 50 50 0 0 0 930 1130 L 150 1130 A 50 50 0 0 0 150 1230"/><path id="s7x" d="M 150 1230 C 120 1500 600 1680 800 1720 C 950 1750 1050 1770 1100 1780"/></svg>
+  </section>
+
+  <!-- 08 honey -->
+  <section class="scene f-honey" id="s8">
+    <div class="t" id="s8t" style="top:130px;font-size:120px"><span data-layout-allow-overlap>A coach that</span><span data-layout-allow-overlap>knows your</span><span data-layout-allow-overlap>symptoms.</span></div>
+    <div class="sketch" id="d8" data-src="assets/draw/08-sofa.png" data-w="520" data-h="720" style="left:330px;top:1180px;width:520px;height:720px"></div>
+    <div class="t small" id="b1t" style="top:630px;left:110px;right:300px;font-size:52px"><span data-layout-allow-overlap>Slept badly.</span><span data-layout-allow-overlap>Hot flushes again.</span></div>
+    <div class="t small" id="b2t" style="top:915px;left:300px;right:90px;font-size:52px"><span data-layout-allow-overlap>Lighter session today.</span><span data-layout-allow-overlap>Protein at breakfast.</span></div>
+    <svg id="dots" style="position:absolute;left:560px;top:990px;width:150px;height:40px;opacity:0" viewBox="0 0 150 40"><circle class="td" cx="20" cy="20" r="14" fill="#3B322C"/><circle class="td" cx="75" cy="20" r="14" fill="#3B322C"/><circle class="td" cx="130" cy="20" r="14" fill="#3B322C"/></svg>
+    <div class="emo" id="em8a" style="left:700px;top:500px;width:130px;height:130px;color:#3B322C"><svg><use href="#e-tired"/></svg></div>
+    <div class="emo" id="em8b" style="left:90px;top:1280px;width:210px;height:210px;color:#3B322C"><svg><use href="#e-happy"/></svg></div>
+    <svg class="ln k" viewBox="0 0 1080 1920"><path id="s8i" d="M 1100 1780 C 1060 1500 900 900 790 705"/><path id="s8a" d="M 790 705 L 790 810 L 160 810 L 120 860 L 130 810 L 70 810 L 70 600 L 790 600 L 790 705"/><path id="s8b" d="M 790 705 C 860 760 900 820 900 880 L 1010 880 L 1010 1140 L 960 1140 L 990 1190 L 920 1140 L 260 1140 L 260 880 L 900 880"/><path id="s8x" d="M 900 880 C 1000 860 1060 820 1100 800"/></svg>
+  </section>
+
+  <!-- 09 plum -->
+  <section class="scene f-plum" id="s9">
+    <div class="t" id="s9t" style="top:130px;font-size:130px"><span data-layout-allow-overlap>Lift a little</span><span data-layout-allow-overlap>more each</span><span data-layout-allow-overlap>week.</span></div>
+    <div class="sketch inv" id="d9" data-src="assets/draw/09-squat.png" data-w="620" data-h="930" style="left:40px;top:640px;width:620px;height:930px"></div>
+    <div class="bar" style="left:720px;top:1570px;width:44px;height:120px"></div>
+    <div class="bar" style="left:780px;top:1520px;width:44px;height:170px"></div>
+    <div class="bar" style="left:840px;top:1470px;width:44px;height:220px"></div>
+    <div class="bar" style="left:900px;top:1410px;width:44px;height:280px"></div>
+    <div class="bar" style="left:960px;top:1340px;width:44px;height:350px"></div>
+    <div class="emo" id="em9" style="left:770px;top:910px;width:200px;height:200px;color:#FBF8F4"><svg><use href="#e-proud"/></svg></div>
+    <svg class="ln v" viewBox="0 0 1080 1920"><path id="s9i" d="M -20 800 C 300 600 600 620 740 700"/><path id="s9o" d="M 740 700 L 780 700 L 780 760 L 960 760 L 960 700 L 1000 700 L 1000 820 L 960 820 L 960 760 L 780 760 L 780 820 L 740 820 L 740 700"/><path id="s9x" d="M 740 820 C 700 1000 680 1600 700 1700 L 1020 1700 C 1060 1700 1080 1720 1100 1740"/></svg>
+  </section>
+
+  <!-- 10 almond -->
+  <section class="scene f-almond" id="s10">
+    <div class="t" id="s10t" style="top:130px;font-size:130px"><span data-layout-allow-overlap>Photo your</span><span data-layout-allow-overlap>fridge.</span><span data-layout-allow-overlap class="em-deep">Get dinner.</span></div>
+    <div class="sketch" id="d10" data-src="assets/draw/10-fridge.png" data-w="600" data-h="900" style="left:20px;top:600px;width:600px;height:900px"></div>
+    <div id="card" style="position:absolute;left:505px;top:1185px;width:500px;height:330px;background:#EDE3D6"></div>
+    <div class="t small" id="cardt" style="top:1225px;left:545px;right:90px;font-size:48px"><span data-layout-allow-overlap>Chicken, spinach</span><span data-layout-allow-overlap>&amp; feta</span><span style="font-size:36px;font-weight:600;margin-top:28px;color:#5D534B">38g protein · 20 min</span></div>
+    <div class="emo" id="em10" style="right:60px;top:1580px;width:200px;height:200px;color:#3B322C"><svg><use href="#e-love"/></svg></div>
+    <svg class="ln k" viewBox="0 0 1080 1920"><path id="s10i" d="M -20 1740 C 300 1720 480 1620 500 1520"/><path id="s10o" d="M 500 1520 L 500 1180 L 1010 1180 L 1010 1520 L 500 1520"/><path id="s10x" d="M 500 1520 C 480 1700 300 1800 -20 1820"/></svg>
+  </section>
+
+  <!-- 11 ivory: the whole film as colour tiles -->
+  <section class="scene f-ivory" id="s11">
+    <div class="tile" style="left:125px;top:420px;background:#EDE3D6"></div>
+    <div class="tile" style="left:295px;top:420px;background:#C2714F"></div>
+    <div class="tile" style="left:465px;top:420px;background:#E8C05F"></div>
+    <div class="tile" style="left:635px;top:420px;background:#A9647A"></div>
+    <div class="tile" style="left:805px;top:420px;background:#3B322C"></div>
+    <div class="tile" style="left:125px;top:706px;background:#EDE3D6"></div>
+    <div class="tile" style="left:295px;top:706px;background:#C2714F"></div>
+    <div class="tile" style="left:465px;top:706px;background:#E8C05F"></div>
+    <div class="tile" style="left:635px;top:706px;background:#A9647A"></div>
+    <div class="tile" style="left:805px;top:706px;background:#EDE3D6"></div>
+    <div class="t c" id="s11t" style="top:1220px;font-size:100px"><span data-layout-allow-overlap>Built for the body</span><span data-layout-allow-overlap>you have <i data-layout-allow-overlap style="font-style:normal;color:#A85A3C">now.</i></span></div>
+    <svg class="ln k" viewBox="0 0 1080 1920"><path id="s11i" d="M 1100 1820 C 1050 1600 1020 1300 1010 1030"/><path id="s11o" d="M 1010 1030 C 1040 900 1040 600 1000 380 C 800 340 300 340 90 380 C 50 500 40 800 60 1040 C 300 1080 800 1080 960 1050 L 920 1010 L 960 1050 L 915 1090"/></svg>
+  </section>
+
+  <!-- 12 ink: the line ends as the dot -->
+  <section class="scene f-ink" id="s12">
+    <div class="t c" id="wm12" style="top:640px;font-size:300px;letter-spacing:-0.05em;line-height:1"><span data-layout-allow-overlap><i class="lt" style="font-style:normal;display:inline-block">k</i><i class="lt" style="font-style:normal;display:inline-block">e</i><i class="lt" style="font-style:normal;display:inline-block">e</i><i class="lt" style="font-style:normal;display:inline-block">l</i><i style="display:inline-block;width:60px"></i></span></div>
+    <div id="dot12" style="left:788px;top:816px"></div>
+    <div class="t c" id="s12t" style="top:1060px;font-size:110px;color:#F0C9A8"><span data-layout-allow-overlap>Strong for life.</span></div>
+    <div id="cta" style="position:absolute;left:0;right:0;top:1420px;text-align:center"><span style="display:inline-block;background:#FBF8F4;color:#3B322C;font-weight:700;font-size:54px;letter-spacing:-0.02em;padding:34px 72px;border-radius:999px">Start your free trial</span></div>
+    <svg class="ln v" viewBox="0 0 1080 1920"><path id="s12i" d="M -20 1500 C 200 1450 300 1100 520 1040 C 700 990 780 930 820 848"/></svg>
+  </section>
+
+  <!-- the line thickens into a cover before the drop -->
+  <svg id="cover" class="ln" viewBox="0 0 1080 1920" style="opacity:0"><path id="coverPath" d="M 80 1320 L 1280 1500 L -200 1700 L 1280 1900 L -200 2100 M -200 -100 L 1280 120 L -200 340 L 1280 560 L -200 780 L 1280 1000 L -200 1220 L 1280 1440 L -200 1660 L 1280 1880 L -200 2060" style="stroke:#C08E82;stroke-width:400"/></svg>
+
+  <!-- sounds: sparse -->
+  <audio id="sx1" data-start="0.56" data-duration="0.12" data-volume="0.3" src="assets/sfx/switch.wav"></audio>
+  <audio id="sx2" data-start="2.17" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx3" data-start="3.03" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="sx4" data-start="3.89" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx5" data-start="4.13" data-duration="1.3" data-volume="0.22" src="assets/sfx/counter.wav"></audio>
+  <audio id="sx6" data-start="5.60" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx7" data-start="6.04" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx8" data-start="6.48" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx9" data-start="6.92" data-duration="0.8" data-volume="0.28" src="assets/sfx/fill.wav"></audio>
+  <audio id="sx10" data-start="8.07" data-duration="0.7" data-volume="0.32" src="assets/sfx/star.wav"></audio>
+  <audio id="sx11" data-start="9.89" data-duration="0.09" data-volume="0.38" src="assets/sfx/snap.wav"></audio>
+  <audio id="sx12" data-start="10.74" data-duration="0.9" data-volume="0.22" src="assets/sfx/success.wav"></audio>
+  <audio id="sx13" data-start="11.17" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx14" data-start="11.60" data-duration="1.3" data-volume="0.22" src="assets/sfx/counter.wav"></audio>
+  <audio id="sx15" data-start="12.89" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx16" data-start="14.53" data-duration="0.16" data-volume="0.28" src="assets/sfx/pop.wav"></audio>
+  <audio id="sx17" data-start="15.46" data-duration="0.06" data-volume="0.32" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx18" data-start="16.42" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx19" data-start="16.74" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx20" data-start="17.06" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx21" data-start="17.38" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx22" data-start="17.71" data-duration="0.06" data-volume="0.25" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx23" data-start="18.67" data-duration="0.09" data-volume="0.35" src="assets/sfx/snap.wav"></audio>
+  <audio id="sx24" data-start="20.60" data-duration="0.06" data-volume="0.3" src="assets/sfx/tick.wav"></audio>
+  <audio id="sx25" data-start="23.03" data-duration="1.6" data-volume="0.3" src="assets/sfx/chime.wav"></audio>
+</div>
+
+<script>
+(function () {
+  const LA = window.LineArt;
+  LA.ensureBoil(document.getElementById('root'));
+  document.querySelectorAll('.sketch').forEach((el) => LA.sketch(el));
+  const realTl = gsap.timeline({ paused: true });
+  // Afrobeat retime. The scenes below were authored on the old 2s bar grid; MAP pins each
+  // old scene start to its new beat on the afrobeat track (beat = 0.4286s, groove drops at 7.74s,
+  // accents at 17.17 / 20.59 / 24.02) and stretches everything inside a scene to fit.
+  const MAP = [[0, 0], [2.02, 2.17], [4.02, 3.89], [6.02, 5.6], [7.48, 6.89], [8.02, 7.74], [10.02, 9.46], [12.02, 11.17],
+    [14.02, 12.89], [16.03, 15.46], [18.02, 18.03], [20.02, 20.6], [22.02, 22.32], [26.6, 27.4]];
+  const seg = (t) => { for (let i = 1; i < MAP.length; i++) if (t <= MAP[i][0]) return i; return MAP.length - 1; };
+  const M = (t) => { const i = seg(t), [a0, b0] = MAP[i - 1], [a1, b1] = MAP[i]; return b0 + ((t - a0) * (b1 - b0)) / (a1 - a0); };
+  const K = (t) => { const i = seg(t), [a0, b0] = MAP[i - 1], [a1, b1] = MAP[i]; return (b1 - b0) / (a1 - a0); };
+  const fit = (v, k) => {
+    if (!v || typeof v !== 'object') return v;
+    const o = { ...v };
+    if (typeof o.duration === 'number') o.duration *= k;
+    if (typeof o.stagger === 'number') o.stagger *= k;
+    return o;
+  };
+  const tl = {
+    to: (t, v, at) => (realTl.to(t, fit(v, K(at)), M(at)), tl),
+    fromTo: (t, f, v, at) => (realTl.fromTo(t, f, fit(v, K(at)), M(at)), tl),
+    set: (t, v, at) => (realTl.set(t, v, M(at)), tl),
+  };
+  const $ = (id) => document.getElementById(id);
+
+  // Hard cuts: each scene owns one bar of the track, cuts land on the downbeat.
+  const CUTS = [['s1', 0, 2.02], ['s2', 2.02, 4.02], ['s3', 4.02, 6.02], ['s4', 6.02, 8.02], ['s5', 8.02, 10.02], ['s6', 10.02, 12.02],
+    ['s7', 12.02, 14.02], ['s8', 14.02, 16.03], ['s9', 16.03, 18.02], ['s10', 18.02, 20.02], ['s11', 20.02, 22.02], ['s12', 22.02, 26.6]];
+  gsap.set('.scene', { visibility: 'hidden' });
+  CUTS.forEach(([id, a, b]) => { tl.set(`#${id}`, { visibility: 'visible' }, a); tl.set(`#${id}`, { visibility: 'hidden' }, b); });
+
+  // The one line: every path is pen-drawn; each scene's line leaves an edge where the next one picks it up.
+  const line = (id, at, dur, ease = 'power2.inOut') => {
+    const p = $(id);
+    const L = p.getTotalLength();
+    p.style.strokeDasharray = `${L} ${L + 40}`;
+    p.style.strokeDashoffset = `${L}`;
+    tl.to(p, { strokeDashoffset: 0, duration: dur, ease }, at);
+  };
+  const reveal = (id, at, d = 0.6) => LA.reveal(tl, $(id), d, at);
+  // Type slams in oversized and settles fast.
+  const slam = (sel, at, step = 0.08) =>
+    tl.fromTo(sel, { scale: 1.32, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.32, ease: 'expo.out', stagger: step }, at);
+  const emo = (id, at) => tl.fromTo(`#${id}`, { scale: 0, rotation: -30, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.4, ease: 'back.out(2.4)' }, at);
+  const pop = (sel, at, from = {}) => tl.fromTo(sel, { scale: 0.4, opacity: 0, ...from }, { scale: 1, opacity: 1, y: 0, duration: 0.3, ease: 'back.out(2.2)' }, at);
+
+  // 01 Same meals / walks / Different body
+  slam('#l1a', 0.04);
+  reveal('d1', 0.1, 0.8);
+  tl.to('#l1a', { opacity: 0, scale: 0.8, duration: 0.12, ease: 'power2.in' }, 0.44);
+  slam('#l1b', 0.52);
+  slam('#s1t > span', 1.02, 0.25);
+  line('s1o', 1.32, 0.3, 'power2.out');
+  emo('em1', 1.52);
+  line('s1x', 1.6, 0.4);
+
+  // 02 Most apps were built for 25-year-olds
+  slam('#s2t > span', 2.04, 0.12);
+  line('s2i', 2.04, 0.3, 'power2.out');
+  reveal('d2', 2.15, 0.65);
+  line('s2o', 3.02, 0.3, 'power3.out');
+  emo('em2', 3.27);
+  line('s2x', 3.55, 0.42);
+
+  // 03 62g
+  line('s3i', 4.04, 0.28, 'power2.out');
+  line('s3o', 4.3, 0.6);
+  const n62 = $('n62'); const a = { v: 0 };
+  tl.fromTo('#n62', { scale: 1.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'expo.out' }, 4.06);
+  tl.to(a, { v: 62, duration: 0.9, ease: 'expo.out', onUpdate: () => (n62.textContent = Math.round(a.v) + 'g') }, 4.3);
+  slam('#s3t > span', 4.62, 0.12);
+  reveal('d3', 4.8, 0.5);
+  emo('em3', 5.1);
+  line('s3x', 5.55, 0.42);
+
+  // 04 three symptoms, one frame per beat, the line draws each frame
+  line('s4i', 6.03, 0.08, 'none');
+  [['s4a', 'd4a', 'c4a', 'em4a'], ['s4b', 'd4b', 'c4b', 'em4b'], ['s4c', 'd4c', 'c4c', 'em4c']].forEach(([p, d, c, e], i) => {
+    const at = 6.05 + i * 0.5;
+    line(p, at, 0.3, 'power2.out');
+    reveal(d, at + 0.06, 0.32);
+    slam(`#${c} > span`, at + 0.1, 0.08);
+    emo(e, at + 0.24);
+  });
+  // The line thickens into a rose-clay scribble that covers the frame
+  tl.set('#cover', { opacity: 1 }, 7.48);
+  line('coverPath', 7.5, 0.45, 'power1.inOut');
+
+  // 05 DROP: the scribble collapses into the dot, keel lands
+  tl.to('#cover', { scale: 0.02, opacity: 0, transformOrigin: '75.9% 44.2%', duration: 0.32, ease: 'power3.in' }, 8.02);
+  slam('#wm5 .lt', 8.12, 0.06);
+  tl.fromTo('#dot5', { scale: 0 }, { scale: 1, duration: 0.4, ease: 'back.out(3)' }, 8.4);
+  slam('#s5t > span', 9.0, 0.12);
+  line('s5x', 9.4, 0.5);
+
+  // 06 Snap your plate
+  slam('#s6t > span', 10.04, 0.1);
+  line('s6i', 10.04, 0.28, 'power2.out');
+  reveal('d6', 10.1, 0.6);
+  line('s6o', 10.3, 0.4);
+  tl.set('#scan', { opacity: 1 }, 10.55);
+  tl.fromTo('#scan', { y: 0 }, { y: 840, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, 10.55);
+  tl.to('#scan', { opacity: 0, duration: 0.1 }, 11.15);
+  ['#ch1', '#ch2', '#ch3'].forEach((c, i) => pop(c, 10.77 + i * 0.25, { y: 24 }));
+  pop('#ch4', 11.52, { y: 24 });
+  emo('em6', 11.6);
+  line('s6x', 11.68, 0.3);
+
+  // 07 See the gap. Close it.
+  slam('#s7t > span', 12.04, 0.12);
+  line('s7i', 12.04, 0.25, 'power2.out');
+  line('s7o', 12.2, 0.4);
+  const n104 = $('n104'); const g = { v: 62 };
+  tl.fromTo('#n104', { scale: 1.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'expo.out' }, 12.1);
+  tl.fromTo('#fill', { scaleX: 0 }, { scaleX: 62 / 104, duration: 0.2, ease: 'power2.out' }, 12.3);
+  tl.to('#fill', { scaleX: 1, duration: 0.9, ease: 'expo.out' }, 12.52);
+  tl.to(g, { v: 104, duration: 0.9, ease: 'expo.out', onUpdate: () => (n104.textContent = Math.round(g.v) + 'g') }, 12.52);
+  slam('#s7t2 > span', 12.7);
+  emo('em7', 13.3);
+  line('s7x', 13.6, 0.36);
+
+  // 08 Coach
+  slam('#s8t > span', 14.04, 0.1);
+  line('s8i', 14.04, 0.28, 'power2.out');
+  reveal('d8', 14.2, 0.6);
+  line('s8a', 14.3, 0.35);
+  slam('#b1t > span', 14.45, 0.1);
+  emo('em8a', 14.6);
+  tl.set('#dots', { opacity: 1 }, 14.85);
+  tl.to('#dots .td', { y: -10, duration: 0.12, yoyo: true, repeat: 1, stagger: 0.08 }, 14.86);
+  tl.set('#dots', { opacity: 0 }, 15.2);
+  line('s8b', 15.2, 0.3);
+  slam('#b2t > span', 15.32, 0.1);
+  emo('em8b', 15.55);
+  line('s8x', 15.68, 0.3);
+
+  // 09 Lift a little more each week (strongest hit of the track)
+  slam('#s9t > span', 16.05, 0.1);
+  line('s9i', 16.05, 0.28, 'power2.out');
+  line('s9o', 16.3, 0.35);
+  reveal('d9', 16.15, 0.6);
+  line('s9x', 16.4, 0.36);
+  tl.fromTo('.bar', { scaleY: 0 }, { scaleY: 1, duration: 0.28, ease: 'back.out(2)', stagger: 0.25 }, 16.77);
+  emo('em9', 17.3);
+
+  // 10 Photo your fridge. Get dinner.
+  slam('#s10t > span', 18.04, 0.1);
+  line('s10i', 18.04, 0.3, 'power2.out');
+  reveal('d10', 18.1, 0.6);
+  tl.fromTo('#card', { opacity: 0 }, { opacity: 1, duration: 0.1 }, 18.42);
+  line('s10o', 18.45, 0.4);
+  slam('#cardt > span', 18.6, 0.1);
+  emo('em10', 19.27);
+  line('s10x', 19.6, 0.35);
+
+  // 11 the whole film as ten colour tiles, the line loops round them
+  tl.fromTo('#s11 .tile', { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(2)', stagger: 0.06 }, 20.06);
+  line('s11i', 20.04, 0.3, 'power2.out');
+  line('s11o', 20.35, 0.85);
+  slam('#s11t > span', 20.6, 0.14);
+
+  // 12 the line arrives and becomes the dot of keel
+  line('s12i', 22.06, 0.6, 'power2.inOut');
+  slam('#wm12 .lt', 22.1, 0.06);
+  tl.fromTo('#dot12', { scale: 0 }, { scale: 1, duration: 0.42, ease: 'back.out(3)' }, 22.64);
+  tl.to('#s12i', { opacity: 0, duration: 0.3 }, 22.75);
+  slam('#s12t > span', 23.27);
+  pop('#cta', 24.02, { y: 40 });
+  realTl.set({}, {}, 27.4);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines['main'] = realTl;
+  realTl.seek(0);
+})();
+</script>
+</body>
+</html>

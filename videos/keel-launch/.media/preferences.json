@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "preferences": {
+    "destination": {
+      "value": "reels-tiktok",
+      "confirmed_in": [
+        "keel-launch"
+      ],
+      "updated_at": "2026-10-02T20:12:57.725Z"
+    },
+    "aspect": {
+      "value": "1080x1920",
+      "confirmed_in": [
+        "keel-launch"
+      ],
+      "updated_at": "2026-10-02T20:12:57.797Z"
+    },
+    "language": {
+      "value": "en",
+      "confirmed_in": [
+        "keel-launch"
+      ],
+      "updated_at": "2026-10-02T20:12:57.859Z"
+    },
+    "flow": {
+      "value": "companion",
+      "confirmed_in": [
+        "keel-launch"
+      ],
+      "updated_at": "2026-10-02T20:12:57.925Z"
+    },
+    "storyboard": {
+      "value": "yes",
+      "confirmed_in": [
+        "keel-launch"
+      ],
+      "updated_at": "2026-10-02T20:12:57.990Z"
+    }
+  },
+  "sightings": {}
+}
