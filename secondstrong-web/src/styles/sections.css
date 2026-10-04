@@ -350,6 +350,7 @@ footer a:hover { text-decoration: underline; }
 .wl-stage legend { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
 .wl-stage legend span { font: 500 12px/1 var(--mono); color: var(--ink-2); margin-left: 8px; }
 .wl-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.wl-consent { font-size: 14px; line-height: 1.45; color: var(--ink-2); margin-top: 12px; max-width: 40em; }
 .wl-chip { font: 600 16px/1 var(--display); padding: 11px 18px; border-radius: 999px; border: 2px solid rgba(59,50,44,.25); background: transparent; color: var(--ink); cursor: pointer;
   transition: background-color .18s, border-color .18s, color .18s, transform .16s var(--ease-out, cubic-bezier(.16,1,.3,1)); }
 .wl-chip:active { transform: scale(.95); }
@@ -395,6 +396,7 @@ footer a:hover { text-decoration: underline; }
 .wl-error span { display: inline-block; animation: wl-write .5s cubic-bezier(.16,1,.3,1) both; }
 @keyframes wl-write { from { clip-path: inset(-20% 100% -20% 0); } to { clip-path: inset(-20% -2% -20% 0); } }
 .wl-fine { font: 500 12px/1.5 var(--mono); color: var(--ink-2); margin-top: 6px; }
+.wl-fine a { color: inherit; text-underline-offset: 2px; }
 
 /* confirmation: the drawing sketches in, the title lands line by line, then the words follow */
 .wl-done { display: grid; grid-template-columns: 150px 1fr; gap: 30px; align-items: center; padding: 6px 0 10px; }

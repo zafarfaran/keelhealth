@@ -139,6 +139,10 @@ export function Waitlist() {
                     </button>
                   ))}
                 </div>
+                <p className="wl-consent">
+                  If you pick one, we keep it with your email to make our launch emails more relevant. It&apos;s health
+                  information, so choosing it is your consent for us to store it. You can ask us to delete it anytime.
+                </p>
               </fieldset>
 
               <div className="wl-row">
@@ -183,7 +187,10 @@ export function Waitlist() {
               <p className="wl-error" id={errorId} role="alert">
                 {error && <span key={error}>{error}</span>}
               </p>
-              <p className="wl-fine">We&apos;ll only email you about Second Strong&apos;s launch. Unsubscribe anytime.</p>
+              <p className="wl-fine">
+                We&apos;ll only email you about Second Strong&apos;s launch. Unsubscribe anytime. Read our{" "}
+                <a href="/privacy">privacy policy</a>.
+              </p>
             </form>
           ) : (
             <div className="wl-done">

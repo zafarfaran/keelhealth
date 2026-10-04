@@ -102,7 +102,7 @@ export function Footer() {
           that worry you.
         </span>
         <span>
-          <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:hello@secondstrong.com">Contact</a>
+          <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="mailto:hello@secondstrong.com">Contact</a>
         </span>
       </div>
     </footer>

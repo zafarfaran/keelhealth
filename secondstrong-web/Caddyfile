@@ -24,7 +24,8 @@
 		X-Frame-Options DENY
 	}
 
-	try_files {path} {path}.html {path}/index.html
+	# .html first: the export also writes a /privacy/ data folder beside privacy.html, which must not win.
+	try_files {path}.html {path} {path}/index.html
 	file_server
 	handle_errors {
 		rewrite * /404.html
