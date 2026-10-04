@@ -4,6 +4,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
+# Baked into the static JS at build time; set it as a Railway variable.
+ARG NEXT_PUBLIC_WAITLIST_ENDPOINT
+ENV NEXT_PUBLIC_WAITLIST_ENDPOINT=$NEXT_PUBLIC_WAITLIST_ENDPOINT
 RUN npm run build
 
 FROM caddy:2-alpine
