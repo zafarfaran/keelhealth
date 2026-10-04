@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Draw } from "@/components/ui/Draw";
-import { isValidEmail, joinWaitlist, type Stage } from "@/lib/waitlist";
+import { isValidEmail, joinWaitlist, WaitlistBusy, type Stage } from "@/lib/waitlist";
+import { mountTurnstile } from "@/lib/turnstile";
 import { useStill } from "@/lib/motion/MotionProvider";
 
 type Phase = "idle" | "sending" | "sent" | "done";
@@ -29,6 +30,7 @@ export function Waitlist() {
   const card = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const field = useRef<HTMLDivElement>(null);
+  const honey = useRef<HTMLInputElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
   const emailId = useId();
 
@@ -76,13 +78,17 @@ export function Waitlist() {
     }
     setPhase("sending");
     try {
-      await joinWaitlist({ email, stage });
+      await joinWaitlist({ email, stage, company: honey.current?.value });
       setPhase("sent");
       window.setTimeout(() => swapTo("done"), still ? 0 : 900);
-    } catch {
+    } catch (err) {
       if (button.current) button.current.style.width = "";
       setPhase("idle");
-      setError("We couldn't add you just now. Please try again in a moment.");
+      setError(
+        err instanceof WaitlistBusy
+          ? "Lots of people are signing up right now. Please try again in a minute."
+          : "We couldn't add you just now. Please try again in a moment.",
+      );
       nudge();
     }
   };
@@ -165,6 +171,15 @@ export function Waitlist() {
                   </svg>
                 </button>
               </div>
+              {/* Honeypot: hidden from people and screen readers, so only bots fill it in. */}
+              <div className="wl-hp" aria-hidden="true">
+                <label>
+                  Company
+                  <input ref={honey} type="text" name="company" tabIndex={-1} autoComplete="off" defaultValue="" />
+                </label>
+              </div>
+              {/* Turnstile bot check: invisible unless Cloudflare needs to ask. */}
+              <div className="wl-ts" ref={mountTurnstile} />
               <p className="wl-error" id={errorId} role="alert">
                 {error && <span key={error}>{error}</span>}
               </p>

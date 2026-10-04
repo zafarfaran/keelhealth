@@ -387,6 +387,10 @@ footer a:hover { text-decoration: underline; }
 .wl-go.phase-sent .wl-tick { stroke: var(--ink); stroke-dashoffset: 0; transition: stroke-dashoffset .4s .3s cubic-bezier(.65,0,.35,1); }
 @keyframes wl-circle { to { transform: rotate(360deg); } }
 
+/* honeypot: off-screen rather than display:none, which some bots skip */
+.wl-hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+/* Turnstile only takes space when it has to show a challenge */
+.wl-ts:not(:empty) { margin-top: 14px; }
 .wl-error { min-height: 24px; margin-top: 12px; font-size: 16px; font-weight: 600; color: var(--terra-deep); }
 .wl-error span { display: inline-block; animation: wl-write .5s cubic-bezier(.16,1,.3,1) both; }
 @keyframes wl-write { from { clip-path: inset(-20% 100% -20% 0); } to { clip-path: inset(-20% -2% -20% 0); } }
