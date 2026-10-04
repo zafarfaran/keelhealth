@@ -1,8 +1,8 @@
 import type { Step } from "./path";
 
 export interface Measured {
-  /** The whole path, for the <path d>. */
-  d: string;
+  /** The path split into consecutive chunks, so drawing repaints one short piece, not the page. */
+  chunks: Chunk[];
   total: number;
   hits: { at: number; selector: string }[];
   /** Samples along the path: length, x, y, and the lowest y reached so far (for scroll mapping). */
@@ -12,7 +12,16 @@ export interface Measured {
   maxY: Float64Array;
 }
 
+export interface Chunk {
+  d: string;
+  /** Measured length where this chunk starts and ends along the whole route. */
+  start: number;
+  end: number;
+}
+
 const NS = "http://www.w3.org/2000/svg";
+/** Target chunk length. Short enough that a repaint stays near the viewport, long enough to keep the element count low. */
+const CHUNK = 1400;
 
 /**
  * Measures a route step by step. Each step is measured on its own short probe path, so the cost
@@ -24,10 +33,16 @@ export function measure(steps: Step[], host: SVGSVGElement, spacing = 10): Measu
   host.appendChild(probe);
   const len: number[] = [], xs: number[] = [], ys: number[] = [];
   const hits: Measured["hits"] = [];
-  let d = "";
+  const chunks: Chunk[] = [];
+  let chunk: Chunk = { d: "", start: 0, end: 0 };
   let cum = 0;
 
   for (const st of steps) {
+    // Start a new chunk at a drawn step once this one is long enough; it picks up where the pen is.
+    if (st.d && !st.d.startsWith("M") && (chunk.d === "" || cum - chunk.start >= CHUNK)) {
+      if (chunk.d) chunks.push({ ...chunk, end: cum });
+      chunk = { d: `M ${st.from[0]} ${st.from[1]}`, start: cum, end: cum };
+    }
     if (st.d.startsWith("M")) {
       len.push(cum); xs.push(st.from[0]); ys.push(st.from[1]);
     } else if (st.d) {
@@ -40,15 +55,16 @@ export function measure(steps: Step[], host: SVGSVGElement, spacing = 10): Measu
       }
       cum += l;
     }
-    if (st.d) d += " " + st.d;
+    if (st.d) chunk.d += " " + st.d;
     if (st.hit) hits.push({ at: cum, selector: st.hit });
   }
+  if (chunk.d) chunks.push({ ...chunk, end: cum });
   probe.remove();
 
   const maxY = new Float64Array(ys.length);
   let m = -Infinity;
   ys.forEach((v, i) => (maxY[i] = m = Math.max(m, v)));
-  return { d, total: cum, hits, len: Float64Array.from(len), x: Float64Array.from(xs), y: Float64Array.from(ys), maxY };
+  return { chunks, total: cum, hits, len: Float64Array.from(len), x: Float64Array.from(xs), y: Float64Array.from(ys), maxY };
 }
 
 /** Index of the last sample whose value in `arr` (ascending) is <= v. */
