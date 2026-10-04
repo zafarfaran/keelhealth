@@ -1,0 +1,28 @@
+{
+	admin off
+	auto_https off
+}
+
+:{$PORT} {
+	root * /srv
+	encode zstd gzip
+
+	# Next's hashed build files never change; everything else revalidates.
+	@hashed path /_next/static/*
+	header @hashed Cache-Control "public, max-age=31536000, immutable"
+	@media path /assets/*
+	header @media Cache-Control "public, max-age=604800"
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+	}
+
+	try_files {path} {path}.html {path}/index.html
+	file_server
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+}

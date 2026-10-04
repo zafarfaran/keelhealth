@@ -1,0 +1,54 @@
+/* Second Strong base: the one-line film's palette, type and line drawings.
+   Fonts come from next/font (see app/layout.tsx) as --font-bricolage and --font-plex. */
+
+:root {
+  --ink: #3B322C; --ink-2: #5D534B; --ivory: #FBF8F4; --almond: #EDE3D6; --taupe: #A8968A;
+  --clay: #C08E82; --terra: #C2714F; --terra-deep: #A85A3C; --apricot: #F0C9A8;
+  --honey: #E8C05F; --plum: #A9647A; --olive: #9AA88F;
+  --display: var(--font-bricolage), system-ui, sans-serif;
+  --mono: var(--font-plex), ui-monospace, monospace;
+  --gutter: clamp(16px, 5vw, 80px);
+  color-scheme: light;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--almond); color: var(--ink); font-family: var(--display); font-optical-sizing: auto; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--terra-deep); outline-offset: 3px; border-radius: 6px; }
+
+/* Line drawings: transparent masks, so they take any colour via currentColor. */
+.draw { display: block; background: currentColor; -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat; }
+.d-phone { --src: url(/assets/draw/02-phone.webp); aspect-ratio: 1; }
+.d-night { --src: url(/assets/draw/04a-night.webp); aspect-ratio: 1; }
+.d-stairs { --src: url(/assets/draw/04b-stairs.webp); aspect-ratio: 1; }
+.d-desk { --src: url(/assets/draw/04c-desk.webp); aspect-ratio: 1; }
+.d-plate { --src: url(/assets/draw/06-plate.webp); aspect-ratio: 1; }
+.d-sofa { --src: url(/assets/draw/08-sofa.webp); aspect-ratio: 2 / 3; }
+.d-squat { --src: url(/assets/draw/09-squat.webp); aspect-ratio: 2 / 3; }
+.d-fridge { --src: url(/assets/draw/10-fridge.webp); aspect-ratio: 2 / 3; }
+.d-carry { --src: url(/assets/draw/11-carry.webp); aspect-ratio: 2 / 3; }
+
+.emo { display: inline-block; width: 1em; height: 1em; }
+.emo svg { width: 100%; height: 100%; overflow: visible; }
+
+/* The wordmark: live Bricolage, light "second" into heavy "strong", plus the clay dot. */
+.wordmark { font-weight: 800; letter-spacing: -0.05em; line-height: 1; display: inline-flex; align-items: baseline; }
+.wordmark .wm-a { font-weight: 300; letter-spacing: -0.04em; }
+.wordmark .wm-b { display: inline-flex; align-items: baseline; }
+.wordmark .dot { display: inline-block; width: .2em; height: .2em; border-radius: 50%; background: var(--clay); margin-left: .06em; }
+/* stacked: "second" over "strong", for the big brand moments */
+.wordmark.stack { flex-direction: column; align-items: center; line-height: .86; }
+
+.btn { display: inline-flex; align-items: center; gap: .5em; font: 700 18px/1 var(--display); letter-spacing: -0.01em; padding: 18px 30px; border-radius: 999px; background: var(--ink); color: var(--ivory); text-decoration: none; transition: transform .16s cubic-bezier(.2,.8,.2,1), background-color .16s; }
+.btn:active { transform: scale(.97); }
+.btn.light { background: var(--ivory); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+.d-morning { --src: url(/assets/draw/20-morning.webp); aspect-ratio: 1; }
+.d-snap { --src: url(/assets/draw/21-snap.webp); aspect-ratio: 1; }
+.d-lift { --src: url(/assets/draw/22-lift.webp); aspect-ratio: 1; }
+.d-wind { --src: url(/assets/draw/23-wind.webp); aspect-ratio: 1; }
+.d-sitstand { --src: url(/assets/draw/24-sitstand.webp); aspect-ratio: 2 / 3; }
+.d-waitlist { --src: url(/assets/draw/26-waitlist.webp); aspect-ratio: 1; }
+.d-typical { --src: url(/assets/draw/27-typical.webp); aspect-ratio: 1; }
