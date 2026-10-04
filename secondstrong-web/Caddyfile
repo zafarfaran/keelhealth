@@ -4,6 +4,11 @@
 }
 
 :{$PORT} {
+	# The Railway address is only for Railway; visitors belong on the real domain (the waitlist's
+	# bot check is tied to it). Railway's healthcheck uses its own host, so it is unaffected.
+	@railway host secondstrong.up.railway.app
+	redir @railway https://secondstrong.com{uri} permanent
+
 	root * /srv
 	encode zstd gzip
 
