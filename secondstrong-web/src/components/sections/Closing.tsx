@@ -1,6 +1,7 @@
 import { CTA_HREF, CTA_LABEL, faqs, plans } from "@/content/site";
 import { Draw } from "@/components/ui/Draw";
 import { Wordmark } from "@/components/ui/Wordmark";
+import { company } from "@/content/legal";
 import { HitSection } from "@/components/ui/HitSection";
 
 export function Pricing() {
@@ -96,13 +97,14 @@ export function Footer() {
     <footer id="footer">
       <div className="wrap">
         <span className="legal">
-          Second Strong · secondstrong.com
+          Second Strong is a product of <a href={company.website}>Acumei</a>. {company.name}, registered in{" "}
+          {company.country}, company number {company.number}. Registered office: {company.address}.
           <br />
           Second Strong gives general guidance on food and exercise. It isn&apos;t medical advice. Talk to your GP about symptoms
           that worry you.
         </span>
         <span>
-          <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="mailto:hello@secondstrong.com">Contact</a>
+          <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href={`mailto:${company.email}`}>Contact</a>
         </span>
       </div>
     </footer>

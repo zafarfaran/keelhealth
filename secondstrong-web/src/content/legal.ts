@@ -6,12 +6,14 @@
  * `ready` stays false until the real details are in; the pages show a visible notice while it is false.
  */
 export const company = {
-  ready: false,
-  name: "[Company name] Ltd",
-  number: "[company number]",
-  address: "[registered office address]",
+  ready: true,
+  name: "Acumei Ltd",
+  website: "https://acumei.com",
+  number: "17394071",
+  address: "Apartment 2203, 11 Michigan Point Tower B, Michigan Avenue, Salford, M50 2HJ, United Kingdom",
   country: "England and Wales",
-  email: "hello@secondstrong.com",
+  // Acumei's inbox, which receives mail today; secondstrong.com has no mail set up yet.
+  email: "hello@acumei.com",
 };
 
 export const updated = "4 October 2026";
@@ -21,7 +23,7 @@ export interface LegalSection {
   body: (string | string[])[]; // a string is a paragraph; an array is a bulleted list
 }
 
-const who = `${company.name}, a company registered in ${company.country} (company number ${company.number}), registered office ${company.address}`;
+const who = `[${company.name}](${company.website}), a company registered in ${company.country} (company number ${company.number}), registered office ${company.address}`;
 
 export const privacy: { title: string; intro: string; sections: LegalSection[] } = {
   title: "Privacy policy",
@@ -31,7 +33,7 @@ export const privacy: { title: string; intro: string; sections: LegalSection[] }
     {
       heading: "Who we are",
       body: [
-        `Second Strong is run by ${who}. We decide how your information is used, which makes us the "controller" under UK data protection law.`,
+        `Second Strong is a product of ${who}. We decide how your information is used, which makes us the "controller" under UK data protection law.`,
         `For anything about your data, email [${company.email}](mailto:${company.email}).`,
       ],
     },
@@ -143,7 +145,7 @@ export const terms: { title: string; intro: string; sections: LegalSection[] } =
   sections: [
     {
       heading: "Who we are",
-      body: [`This website is run by ${who}. You can contact us at [${company.email}](mailto:${company.email}).`],
+      body: [`Second Strong and this website are a product of ${who}. You can contact us at [${company.email}](mailto:${company.email}).`],
     },
     {
       heading: "Not medical advice",
