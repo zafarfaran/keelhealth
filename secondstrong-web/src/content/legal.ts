@@ -12,8 +12,7 @@ export const company = {
   number: "17394071",
   address: "Apartment 2203, 11 Michigan Point Tower B, Michigan Avenue, Salford, M50 2HJ, United Kingdom",
   country: "England and Wales",
-  // Acumei's inbox, which receives mail today; secondstrong.com has no mail set up yet.
-  email: "hello@acumei.com",
+  email: "hello@secondstrong.com",
 };
 
 export const updated = "4 October 2026";
