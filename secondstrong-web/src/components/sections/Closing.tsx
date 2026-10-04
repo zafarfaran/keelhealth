@@ -103,9 +103,21 @@ export function Footer() {
           Second Strong gives general guidance on food and exercise. It isn&apos;t medical advice. Talk to your GP about symptoms
           that worry you.
         </span>
-        <span>
-          <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href={`mailto:${company.email}`}>Contact</a>
-        </span>
+        <div className="foot-side">
+          <span>
+            <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href={`mailto:${company.email}`}>Contact</a>
+          </span>
+          {/* Facts we can stand behind, not a certification: there is no official "GDPR compliant" mark. */}
+          <a className="privacy-badge" href="/privacy">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.5 4.5 5.4v6.1c0 4.6 3.1 8.4 7.5 10 4.4-1.6 7.5-5.4 7.5-10V5.4L12 2.5Z" />
+              <path className="tick" d="m8.6 12.2 2.4 2.4 4.5-4.8" />
+            </svg>
+            <span>
+              <b>UK GDPR</b> · Data stored in the UK · No cookies or tracking
+            </span>
+          </a>
+        </div>
       </div>
     </footer>
   );
